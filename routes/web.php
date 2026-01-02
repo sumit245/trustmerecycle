@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\VendorManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -12,6 +13,12 @@ Route::get('/', function () {
 
 // Authentication routes (will be added by Breeze)
 require __DIR__.'/auth.php';
+
+// Vendor management routes (admin only)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('vendors', VendorManagementController::class)->except(['show', 'edit', 'update']);
+    Route::post('vendors/import', [VendorManagementController::class, 'import'])->name('vendors.import');
+});
 
 // Vendor routes
 Route::middleware(['auth', 'vendor'])->prefix('vendor')->name('vendor.')->group(function () {
