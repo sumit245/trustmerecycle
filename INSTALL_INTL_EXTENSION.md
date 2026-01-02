@@ -134,3 +134,10 @@ Should output: `intl is loaded`
 As a temporary workaround, you could modify Filament resources to avoid using `Number::format()`, but this is not recommended. It's better to install the extension.
 
 
+
+
+
+
+
+
+

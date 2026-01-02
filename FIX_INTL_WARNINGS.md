@@ -99,3 +99,7 @@ Then manually edit the files to comment out or remove the `extension=intl` lines
 Since intl is already working (as shown by "intl is loaded ✓"), these warnings are just noise and don't affect functionality. However, fixing them will clean up your PHP output and prevent confusion.
 
 
+
+
+
+

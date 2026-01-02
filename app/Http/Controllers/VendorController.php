@@ -20,9 +20,10 @@ class VendorController extends Controller
     {
         $user = Auth::user();
         $godown = $user->godowns()->first();
-        
+
         if (!$godown) {
-            return redirect()->route('vendor.dashboard')->with('error', 'No godown assigned to your account.');
+            // Show an error page instead of redirecting to avoid infinite loop
+            return view('vendor.no-godown', ['user' => $user]);
         }
 
         // Get pending collection jobs

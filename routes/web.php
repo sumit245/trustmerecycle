@@ -7,7 +7,7 @@ Route::get('/', function () {
     if (auth()->check()) {
         return redirect(auth()->user()->isAdmin() ? '/admin' : '/vendor/dashboard');
     }
-    return view('welcome');
+    return redirect('/admin/login');
 });
 
 // Authentication routes (will be added by Breeze)
