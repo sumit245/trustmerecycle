@@ -9,40 +9,9 @@ A comprehensive Laravel 11 application for managing scrap recycling operations w
 - **Threshold Alerts**: Automatic notifications when godowns reach capacity limits
 - **Collection Workflow**: Streamlined process for dispatching trucks and collecting scrap
 - **Financial Tracking**: Visual charts showing estimated value trends over time
-- **Role-Based Access**: Separate interfaces for admins and vendors
+- **Role-Based Access**: Separate interfaces
 
-## Tech Stack
 
-- **Framework**: Laravel 11
-- **Admin Panel**: FilamentPHP v3
-- **Frontend**: Blade Templates + TailwindCSS (CDN) + Alpine.js
-- **Charts**: Chart.js
-- **Database**: MySQL
-- **Authentication**: Custom implementation with role-based redirects
-
-## Installation
-
-### Local Development
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd Recycler
-   ```
-
-2. Install dependencies:
-   ```bash
-   composer install
-   ```
-
-3. Copy environment file:
-   ```bash
-   cp .env.example .env
-   ```
-
-4. Generate application key:
-   ```bash
-   php artisan key:generate
    ```
 
 5. Configure database in `.env`:
