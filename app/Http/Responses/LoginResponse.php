@@ -16,7 +16,7 @@ class LoginResponse implements Responsable
             return redirect()->intended('/admin');
         }
         
-        return redirect()->intended('/vendor/dashboard');
+        return redirect()->intended('/vendor');
     }
 }
 

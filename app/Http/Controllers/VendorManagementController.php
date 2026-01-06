@@ -14,7 +14,7 @@ use App\Imports\VendorsImport;
 class VendorManagementController extends Controller
 {
     /**
-     * Display a listing of vendors.
+     * Display a listing of Site Incharges.
      */
     public function index(Request $request)
     {
@@ -41,7 +41,7 @@ class VendorManagementController extends Controller
     }
 
     /**
-     * Show the form for creating a new vendor.
+     * Show the form for creating a new Site Incharge.
      */
     public function create()
     {
@@ -49,7 +49,7 @@ class VendorManagementController extends Controller
     }
 
     /**
-     * Store a newly created vendor in storage.
+     * Store a newly created Site Incharge in storage.
      */
     public function store(Request $request)
     {
@@ -85,11 +85,11 @@ class VendorManagementController extends Controller
             'current_stock_mt' => 0,
         ]);
 
-        return redirect()->route('vendors.index')->with('success', 'Vendor created successfully!');
+        return redirect()->route('vendors.index')->with('success', 'Site Incharge created successfully!');
     }
 
     /**
-     * Import vendors from Excel file.
+     * Import Site Incharges from Excel file.
      */
     public function import(Request $request)
     {
@@ -113,9 +113,9 @@ class VendorManagementController extends Controller
             $errors = $import->getErrors();
             
             if ($successCount > 0) {
-                $message = "Successfully imported {$successCount} vendor(s).";
+                $message = "Successfully imported {$successCount} Site Incharge(s).";
                 if ($skippedCount > 0) {
-                    $message .= " {$skippedCount} vendor(s) were skipped (already exist).";
+                    $message .= " {$skippedCount} Site Incharge(s) were skipped (already exist).";
                 }
                 if (!empty($errors)) {
                     $message .= " " . count($errors) . " error(s) occurred. Check logs for details.";
@@ -124,10 +124,10 @@ class VendorManagementController extends Controller
             } else {
                 // No vendors imported - check if all were skipped or if there were errors
                 if ($skippedCount > 0 && empty($errors)) {
-                    $message = "All {$skippedCount} vendor(s) in the file already exist in the database. No new vendors were imported.";
+                    $message = "All {$skippedCount} Site Incharge(s) in the file already exist in the database. No new Site Incharges were imported.";
                     return redirect()->route('vendors.index')->with('info', $message);
                 } else {
-                    $errorMessage = "No vendors were imported. ";
+                    $errorMessage = "No Site Incharges were imported. ";
                     if (!empty($errors)) {
                         $errorMessage .= "Errors: " . implode('; ', array_slice($errors, 0, 10));
                         if (count($errors) > 10) {
@@ -137,33 +137,33 @@ class VendorManagementController extends Controller
                         $errorMessage .= "Please check the Excel file format matches the expected structure.";
                     }
                     if ($skippedCount > 0) {
-                        $errorMessage .= " {$skippedCount} vendor(s) were skipped (already exist).";
+                        $errorMessage .= " {$skippedCount} Site Incharge(s) were skipped (already exist).";
                     }
-                    \Log::error('Vendor import failed', ['errors' => $errors, 'skipped' => $skippedCount]);
+                    \Log::error('Site Incharge import failed', ['errors' => $errors, 'skipped' => $skippedCount]);
                     return back()->with('error', $errorMessage);
                 }
             }
         } catch (\Exception $e) {
-            \Log::error('Vendor import exception', [
+            \Log::error('Site Incharge import exception', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return back()->with('error', 'Error importing vendors: ' . $e->getMessage() . '. Check Laravel logs for details.');
+            return back()->with('error', 'Error importing Site Incharges: ' . $e->getMessage() . '. Check Laravel logs for details.');
         }
     }
 
     /**
-     * Remove the specified vendor from storage.
+     * Remove the specified Site Incharge from storage.
      */
     public function destroy($id)
     {
-        $vendor = User::where('id', $id)->where('role', 'vendor')->firstOrFail();
+        $siteIncharge = User::where('id', $id)->where('role', 'vendor')->firstOrFail();
         
         // Delete associated godowns (cascade will handle this)
-        $vendor->godowns()->delete();
-        $vendor->delete();
+        $siteIncharge->godowns()->delete();
+        $siteIncharge->delete();
 
-        return response()->json(['success' => true, 'message' => 'Vendor deleted successfully!']);
+        return response()->json(['success' => true, 'message' => 'Site Incharge deleted successfully!']);
     }
 }
 

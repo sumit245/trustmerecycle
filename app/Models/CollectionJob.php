@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class CollectionJob extends Model
 {
@@ -15,6 +16,7 @@ class CollectionJob extends Model
         'status',
         'truck_details',
         'collection_proof_image',
+        'challan_image',
         'collected_amount_mt',
         'collected_at',
         'dispatched_at',
@@ -70,6 +72,30 @@ class CollectionJob extends Model
             'collection_proof_image' => $proofImage,
             'collected_at' => now(),
         ]);
+    }
+
+    /**
+     * Get the full URL for the collection proof image.
+     */
+    public function getCollectionProofImageUrlAttribute(): ?string
+    {
+        if (!$this->collection_proof_image) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->collection_proof_image);
+    }
+
+    /**
+     * Get the full URL for the challan image.
+     */
+    public function getChallanImageUrlAttribute(): ?string
+    {
+        if (!$this->challan_image) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->challan_image);
     }
 }
 

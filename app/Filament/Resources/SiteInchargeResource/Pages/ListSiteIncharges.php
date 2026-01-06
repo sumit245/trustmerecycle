@@ -1,28 +1,28 @@
 <?php
 
-namespace App\Filament\Resources\GodownResource\Pages;
+namespace App\Filament\Resources\SiteInchargeResource\Pages;
 
-use App\Filament\Resources\GodownResource;
-use App\Imports\GodownsImport;
-use App\Models\User;
+use App\Filament\Resources\SiteInchargeResource;
+use App\Exports\SiteInchargeExport;
+use App\Imports\VendorsImport;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
-class ListGodowns extends ListRecords
+class ListSiteIncharges extends ListRecords
 {
-    protected static string $resource = GodownResource::class;
+    protected static string $resource = SiteInchargeResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\Action::make('import')
-                ->label('Import Sites')
+                ->label('Import Site Incharges')
                 ->icon('heroicon-o-arrow-up-tray')
                 ->color('success')
-                ->modalHeading('Import Sites from Excel')
-                ->modalDescription('Upload an Excel file (.xlsx, .xls, or .csv) with site data. The first row should contain column headers. If Site Incharge or location columns are missing, defaults will be used.')
+                ->modalHeading('Import Site Incharges from Excel')
+                ->modalDescription('Upload an Excel file (.xlsx, .xls, or .csv) with Site Incharge data. The first row should contain column headers.')
                 ->modalSubmitActionLabel('Import')
                 ->form([
                     \Filament\Forms\Components\FileUpload::make('file')
@@ -34,28 +34,12 @@ class ListGodowns extends ListRecords
                         ->directory('imports')
                         ->visibility('private')
                         ->helperText('Supported formats: .xlsx, .xls, .csv. Maximum file size: 10MB'),
-                    \Filament\Forms\Components\Select::make('default_vendor_id')
-                        ->label('Default Site Incharge (if not in Excel)')
-                        ->options(function () {
-                            return User::where('role', 'vendor')->pluck('name', 'id')->toArray();
-                        })
-                        ->searchable()
-                        ->preload()
-                        ->helperText('If Site Incharge column is missing in Excel, all sites will be assigned to this Site Incharge'),
-                    \Filament\Forms\Components\TextInput::make('default_location')
-                        ->label('Default Location (if not in Excel)')
-                        ->default('Noida')
-                        ->maxLength(255)
-                        ->helperText('If location column is missing in Excel, this value will be used for all sites'),
                 ])
-                ->visible(fn () => auth()->user()?->isAdmin() ?? false)
                 ->action(function (array $data) {
                     $filePath = $data['file'];
-                    $defaultVendorId = $data['default_vendor_id'] ?? null;
-                    $defaultLocation = $data['default_location'] ?? 'Noida';
                     
                     try {
-                        $import = new GodownsImport($defaultVendorId, $defaultLocation);
+                        $import = new VendorsImport();
                         
                         // Get the full path to the stored file
                         $fullPath = Storage::disk('local')->path($filePath);
@@ -70,12 +54,12 @@ class ListGodowns extends ListRecords
                         
                         // Build notification message
                         $message = "Import completed. ";
-                        $message .= $successCount > 0 ? "Successfully imported {$successCount} site(s). " : "";
-                        $message .= $skippedCount > 0 ? "Skipped {$skippedCount} row(s). " : "";
+                        $message .= $successCount > 0 ? "Successfully imported {$successCount} Site Incharge(s). " : "";
+                        $message .= $skippedCount > 0 ? "Skipped {$skippedCount} row(s) (already exist). " : "";
                         
                         // Log errors if any
                         if (!empty($errors)) {
-                            \Log::warning('Sites import completed with errors', [
+                            \Log::warning('Site Incharge import completed with errors', [
                                 'success_count' => $successCount,
                                 'skipped_count' => $skippedCount,
                                 'errors' => $errors,
@@ -104,7 +88,7 @@ class ListGodowns extends ListRecords
                                 ->send();
                         }
                     } catch (\Exception $e) {
-                        \Log::error('Sites import failed: ' . $e->getMessage(), [
+                        \Log::error('Site Incharge import failed: ' . $e->getMessage(), [
                             'trace' => $e->getTraceAsString(),
                         ]);
                         
@@ -115,7 +99,21 @@ class ListGodowns extends ListRecords
                             ->send();
                     }
                 }),
+            Actions\Action::make('export')
+                ->label('Export Site Incharges')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->color('info')
+                ->action(function () {
+                    return Excel::download(new SiteInchargeExport(), 'site-incharges-' . now()->format('Y-m-d') . '.xlsx');
+                }),
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            //
         ];
     }
 }

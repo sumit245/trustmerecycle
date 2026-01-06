@@ -50,7 +50,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all godowns for this vendor.
+     * Get all godowns for this Site Incharge.
      */
     public function godowns()
     {
@@ -71,5 +71,13 @@ class User extends Authenticatable
     public function isVendor(): bool
     {
         return $this->role === 'vendor';
+    }
+
+    /**
+     * Check if the user is a Site Incharge (alias for isVendor).
+     */
+    public function isSiteIncharge(): bool
+    {
+        return $this->isVendor();
     }
 }

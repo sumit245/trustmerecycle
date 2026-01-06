@@ -18,7 +18,7 @@
         
         <div class="grid grid-cols-2 gap-4 pt-4 border-t">
             <div>
-                <p class="text-sm text-gray-600">Godown Name</p>
+                <p class="text-sm text-gray-600">Site Name</p>
                 <p class="font-semibold">{{ $godown->name }}</p>
             </div>
             <div>

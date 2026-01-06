@@ -19,12 +19,12 @@
         <form action="{{ route('vendor.job.complete', $job) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Collection Proof Image *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Collection Scrap Image *</label>
                 <input type="file" name="collection_proof_image" accept="image/jpeg,image/png,image/jpg" required class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                 <p class="text-xs text-gray-500 mt-1">Upload photo of empty godown or truck loading (Max 5MB, JPG/PNG)</p>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Collected Amount (Metric Tons) *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Scrap weight *</label>
                 <input type="number" name="collected_amount_mt" step="0.01" min="0.01" max="{{ $godown->current_stock_mt }}" required placeholder="0.00" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 <p class="text-xs text-gray-500 mt-1">Maximum: {{ number_format($godown->current_stock_mt, 2) }} MT</p>
             </div>

@@ -252,7 +252,7 @@ class VendorsImport implements ToCollection, WithHeadingRow
 
                 // Validate required fields
                 if (!$name) {
-                    $this->errors[] = "Row " . ($rowIndex + 2) . " missing name. Available columns: " . implode(', ', array_keys($row->toArray()));
+                    $this->errors[] = "Row " . ($rowIndex + 2) . ": Missing Site Incharge name. Available columns: " . implode(', ', array_keys($row->toArray()));
                     continue;
                 }
                 
@@ -302,7 +302,7 @@ class VendorsImport implements ToCollection, WithHeadingRow
                 ];
             } catch (\Exception $e) {
                 $this->errors[] = "Row " . ($rowIndex + 2) . " error: " . $e->getMessage() . " | Available columns: " . implode(', ', array_keys($row->toArray()));
-                \Log::error('Vendor import error on row ' . ($rowIndex + 2) . ': ' . $e->getMessage(), [
+                \Log::error('Site Incharge import error on row ' . ($rowIndex + 2) . ': ' . $e->getMessage(), [
                     'row_data' => $row->toArray(),
                     'trace' => $e->getTraceAsString()
                 ]);

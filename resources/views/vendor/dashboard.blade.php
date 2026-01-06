@@ -4,7 +4,7 @@
 <div class="space-y-6">
     <!-- Header -->
     <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-2xl font-bold text-gray-900">Vendor Dashboard</h2>
+        <h2 class="text-2xl font-bold text-gray-900">Site Incharge Dashboard</h2>
         <p class="text-gray-600 mt-1">Welcome back, {{ Auth::user()->name }}</p>
     </div>
 

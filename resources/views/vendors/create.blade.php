@@ -3,15 +3,15 @@
 @section('content')
 <div class="max-w-4xl mx-auto">
     <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Add New Vendor</h2>
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Add New Site Incharge</h2>
 
         <form action="{{ route('vendors.store') }}" method="POST" class="space-y-6">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Vendor Information -->
+                <!-- Site Incharge Information -->
                 <div class="md:col-span-2">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Vendor Information</h3>
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Site Incharge Information</h3>
                 </div>
 
                 <div>
@@ -56,13 +56,13 @@
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
-                <!-- Godown Information -->
+                <!-- Site Information -->
                 <div class="md:col-span-2 mt-6">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Godown Information</h3>
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Site Information</h3>
                 </div>
 
                 <div>
-                    <label for="godown_name" class="block text-sm font-medium text-gray-700">Godown Name <span class="text-red-500">*</span></label>
+                    <label for="godown_name" class="block text-sm font-medium text-gray-700">Site Name <span class="text-red-500">*</span></label>
                     <input type="text" name="godown_name" id="godown_name" value="{{ old('godown_name') }}" required
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                     @error('godown_name')
@@ -103,7 +103,7 @@
                     Cancel
                 </a>
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Create Vendor
+                    Create Site Incharge
                 </button>
             </div>
         </form>

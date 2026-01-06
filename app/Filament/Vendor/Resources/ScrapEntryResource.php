@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Vendor\Resources;
 
-use App\Filament\Resources\ScrapEntryResource\Pages;
+use App\Filament\Vendor\Resources\ScrapEntryResource\Pages;
 use App\Models\ScrapEntry;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class ScrapEntryResource extends Resource
 {
@@ -21,23 +22,23 @@ class ScrapEntryResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $user = Auth::user();
+        $godownIds = $user->godowns()->pluck('id')->toArray();
+        $godown = $user->godowns()->first();
+
         return $form
             ->schema([
                 Forms\Components\Select::make('godown_id')
                     ->relationship('godown', 'name')
                     ->required()
-                    ->searchable()
-                    ->preload()
-                    ->options(function () {
-                        // Site Incharge can only select their own godowns
-                        if (auth()->user() && auth()->user()->isSiteIncharge()) {
-                            return auth()->user()->godowns->pluck('name', 'id')->toArray();
-                        }
-                        // Admin can select all godowns
-                        return \App\Models\Godown::pluck('name', 'id')->toArray();
-                    }),
+                    ->options(function () use ($godownIds) {
+                        return \App\Models\Godown::whereIn('id', $godownIds)
+                            ->pluck('name', 'id')
+                            ->toArray();
+                    })
+                    ->default($godown?->id),
                 Forms\Components\Select::make('scrap_type_id')
-                    ->relationship('scrapType', 'name')
+                    ->relationship('scrapType', 'name', fn ($query) => $query->where('is_active', true))
                     ->required()
                     ->searchable()
                     ->preload(),
@@ -48,12 +49,23 @@ class ScrapEntryResource extends Resource
                     ->label('Amount (MT)')
                     ->numeric()
                     ->required()
-                    ->step(0.01),
+                    ->step(0.01)
+                    ->live()
+                    ->afterStateUpdated(function ($state, Forms\Set $set, $get) {
+                        $scrapTypeId = $get('scrap_type_id');
+                        if ($scrapTypeId && $state) {
+                            $scrapType = \App\Models\ScrapType::find($scrapTypeId);
+                            if ($scrapType) {
+                                $set('estimated_value', $state * $scrapType->unit_price_per_ton);
+                            }
+                        }
+                    }),
                 Forms\Components\TextInput::make('estimated_value')
                     ->label('Estimated Value (₹)')
                     ->numeric()
                     ->prefix('₹')
-                    ->disabled(),
+                    ->disabled()
+                    ->dehydrated(),
                 Forms\Components\Textarea::make('notes')
                     ->rows(3),
             ]);
@@ -63,11 +75,9 @@ class ScrapEntryResource extends Resource
     {
         $query = parent::getEloquentQuery();
         
-        // If user is Site Incharge, only show entries from their godowns
-        if (auth()->user() && auth()->user()->isSiteIncharge()) {
-            $godownIds = auth()->user()->godowns->pluck('id')->toArray();
-            $query->whereIn('godown_id', $godownIds);
-        }
+        $user = Auth::user();
+        $godownIds = $user->godowns()->pluck('id')->toArray();
+        $query->whereIn('godown_id', $godownIds);
         
         return $query;
     }
@@ -101,9 +111,6 @@ class ScrapEntryResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('godown_id')
-                    ->label('Site')
-                    ->relationship('godown', 'name'),
                 Tables\Filters\SelectFilter::make('scrap_type_id')
                     ->label('Scrap Type')
                     ->relationship('scrapType', 'name'),
@@ -137,47 +144,13 @@ class ScrapEntryResource extends Resource
             ]);
     }
 
-    public static function canViewAny(): bool
-    {
-        return auth()->check();
-    }
-
-    public static function canCreate(): bool
-    {
-        return auth()->check();
-    }
-
-    public static function canEdit($record): bool
-    {
-        // Site Incharge can only edit entries from their godowns
-        if (auth()->user() && auth()->user()->isSiteIncharge()) {
-            $godownIds = auth()->user()->godowns->pluck('id')->toArray();
-            return in_array($record->godown_id, $godownIds);
-        }
-        
-        // Admin can edit all
-        return auth()->user()?->isAdmin() ?? false;
-    }
-
-    public static function canDelete($record): bool
-    {
-        // Site Incharge can only delete entries from their godowns
-        if (auth()->user() && auth()->user()->isSiteIncharge()) {
-            $godownIds = auth()->user()->godowns->pluck('id')->toArray();
-            return in_array($record->godown_id, $godownIds);
-        }
-        
-        // Admin can delete all
-        return auth()->user()?->isAdmin() ?? false;
-    }
-
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\ScrapEntryResource\Pages\ListScrapEntries::route('/'),
-            'create' => \App\Filament\Resources\ScrapEntryResource\Pages\CreateScrapEntry::route('/create'),
-            'view' => \App\Filament\Resources\ScrapEntryResource\Pages\ViewScrapEntry::route('/{record}'),
-            'edit' => \App\Filament\Resources\ScrapEntryResource\Pages\EditScrapEntry::route('/{record}/edit'),
+            'index' => Pages\ListScrapEntries::route('/'),
+            'create' => Pages\CreateScrapEntry::route('/create'),
+            'view' => Pages\ViewScrapEntry::route('/{record}'),
+            'edit' => Pages\EditScrapEntry::route('/{record}/edit'),
         ];
     }
 }

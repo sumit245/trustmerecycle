@@ -30,7 +30,7 @@ class GodownsImport implements ToCollection, WithHeadingRow
         // Increase execution time limit for large imports
         set_time_limit(300); // 5 minutes
 
-        // Pre-load all vendors into memory for efficient lookup
+        // Pre-load all Site Incharges into memory for efficient lookup
         $vendors = User::where('role', 'vendor')->get()->keyBy(function ($vendor) {
             return strtolower($vendor->email);
         });
@@ -267,17 +267,17 @@ class GodownsImport implements ToCollection, WithHeadingRow
                         if ($firstVendor) {
                             $vendorId = $firstVendor->id;
                         } else {
-                            $this->errors[] = "Row " . ($rowIndex + 2) . ": No vendor specified and no default vendor available. Please provide vendor_id, vendor_name, vendor_email, or select a default vendor. Available columns: " . implode(', ', array_keys($row->toArray()));
+                            $this->errors[] = "Row " . ($rowIndex + 2) . ": No Site Incharge specified and no default Site Incharge available. Please provide vendor_id, vendor_name, vendor_email, or select a default Site Incharge. Available columns: " . implode(', ', array_keys($row->toArray()));
                             $this->skippedCount++;
                             continue;
                         }
                     }
                 }
 
-                // Verify vendor exists and is a vendor
+                // Verify Site Incharge exists and is a vendor
                 $vendor = User::find($vendorId);
                 if (!$vendor || $vendor->role !== 'vendor') {
-                    $this->errors[] = "Row " . ($rowIndex + 2) . ": Invalid vendor ID {$vendorId}. Vendor not found or is not a vendor.";
+                    $this->errors[] = "Row " . ($rowIndex + 2) . ": Invalid Site Incharge ID {$vendorId}. Site Incharge not found or is not a Site Incharge.";
                     $this->skippedCount++;
                     continue;
                 }

@@ -21,10 +21,10 @@ class CapacityAlertWidget extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make('vendor.name')
-                    ->label('Vendor')
+                    ->label('Site Incharge')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Godown')
+                    ->label('Site')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('current_stock_mt')
                     ->label('Current Stock')
@@ -40,8 +40,8 @@ class CapacityAlertWidget extends BaseWidget
                     ->color(fn ($state) => $state >= 100 ? 'danger' : 'warning')
                     ->sortable(),
             ])
-            ->heading('Godowns Nearing/Full Capacity')
-            ->description('Godowns at 80% or more capacity');
+            ->heading('Sites Nearing/Full Capacity')
+            ->description('Sites at 80% or more capacity');
     }
 }
 

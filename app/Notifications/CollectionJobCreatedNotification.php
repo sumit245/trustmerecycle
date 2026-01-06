@@ -39,7 +39,7 @@ class CollectionJobCreatedNotification extends Notification implements ShouldQue
         return (new MailMessage)
                     ->subject('Collection Truck Dispatched')
                     ->line("A collection truck has been dispatched to your godown '{$this->job->godown->name}'.")
-                    ->action('View Details', url('/vendor/dashboard'));
+                    ->action('View Details', url('/vendor'));
     }
 
     /**

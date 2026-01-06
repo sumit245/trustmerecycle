@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 class VendorController extends Controller
 {
     /**
-     * Display the vendor dashboard.
+     * Display the Site Incharge dashboard.
      */
     public function dashboard()
     {

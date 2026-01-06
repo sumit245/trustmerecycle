@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class CollectionJobResource extends Resource
 {
@@ -23,10 +24,19 @@ class CollectionJobResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('godown_id')
+                    ->label('Site')
                     ->relationship('godown', 'name')
                     ->required()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->options(function () {
+                        // Site Incharge can only select their own godowns
+                        if (auth()->user() && auth()->user()->isSiteIncharge()) {
+                            return auth()->user()->godowns->pluck('name', 'id')->toArray();
+                        }
+                        // Admin can select all godowns
+                        return \App\Models\Godown::pluck('name', 'id')->toArray();
+                    }),
                 Forms\Components\Select::make('status')
                     ->options([
                         'pending' => 'Pending',
@@ -39,17 +49,41 @@ class CollectionJobResource extends Resource
                     ->keyLabel('Field')
                     ->valueLabel('Value'),
                 Forms\Components\TextInput::make('collected_amount_mt')
-                    ->label('Collected Amount (MT)')
+                    ->label('Scrap weight')
                     ->numeric()
                     ->step(0.01),
                 Forms\Components\FileUpload::make('collection_proof_image')
-                    ->label('Proof Image')
+                    ->label('Scrap Image')
                     ->image()
                     ->directory('proofs')
-                    ->visibility('public'),
+                    ->disk('public')
+                    ->visibility('public')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
+                    ->maxSize(5120),
+                Forms\Components\FileUpload::make('challan_image')
+                    ->label('Challan')
+                    ->image()
+                    ->directory('challans')
+                    ->disk('public')
+                    ->visibility('public')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
+                    ->maxSize(5120),
                 Forms\Components\DateTimePicker::make('dispatched_at'),
                 Forms\Components\DateTimePicker::make('collected_at'),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        
+        // If user is Site Incharge, only show jobs from their godowns
+        if (auth()->user() && auth()->user()->isSiteIncharge()) {
+            $godownIds = auth()->user()->godowns->pluck('id')->toArray();
+            $query->whereIn('godown_id', $godownIds);
+        }
+        
+        return $query;
     }
 
     public static function table(Table $table): Table
@@ -57,7 +91,7 @@ class CollectionJobResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('godown.name')
-                    ->label('Godown')
+                    ->label('Site')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
@@ -72,12 +106,17 @@ class CollectionJobResource extends Resource
                     ->formatStateUsing(fn ($state) => $state['driver_name'] ?? 'N/A')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('collected_amount_mt')
-                    ->label('Collected')
+                    ->label('Scrap weight')
                     ->suffix(' MT')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\ImageColumn::make('collection_proof_image')
-                    ->label('Proof')
+                    ->label('Scrap')
+                    ->disk('public')
+                    ->toggleable(),
+                Tables\Columns\ImageColumn::make('challan_image')
+                    ->label('Challan')
+                    ->disk('public')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('dispatched_at')
                     ->dateTime()
@@ -109,6 +148,35 @@ class CollectionJobResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->check();
+    }
+
+    public static function canCreate(): bool
+    {
+        // Only admin can create collection jobs
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        // Site Incharge can only edit jobs from their godowns
+        if (auth()->user() && auth()->user()->isSiteIncharge()) {
+            $godownIds = auth()->user()->godowns->pluck('id')->toArray();
+            return in_array($record->godown_id, $godownIds);
+        }
+        
+        // Admin can edit all
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        // Only admin can delete collection jobs
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getPages(): array

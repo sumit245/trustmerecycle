@@ -150,3 +150,11 @@ This project is proprietary software for TrustMeRecycle business operations.
 ## Support
 
 For deployment issues, refer to [DEPLOYMENT.md](DEPLOYMENT.md). For development questions, consult Laravel and FilamentPHP documentation.
+
+## Deployment steps
+1. SSH into hostinger
+ssh -p 65002 u103584291@145.79.212.181
+
+2. cd domains/trustmerecycle.in/trustmerecycle
+
+3. git pull origin main/munish

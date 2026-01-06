@@ -16,7 +16,7 @@ class EnsureVendorRole
     public function handle(Request $request, Closure $next): Response
     {
         if (! $request->user() || ! $request->user()->isVendor()) {
-            abort(403, 'Access denied. Vendor access required.');
+            abort(403, 'Access denied. Site Incharge access required.');
         }
 
         return $next($request);

@@ -19,22 +19,36 @@ class GodownResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static ?string $navigationLabel = 'Godowns';
+    protected static ?string $navigationLabel = 'Sites';
 
-    protected static ?string $modelLabel = 'Godown';
+    protected static ?string $modelLabel = 'Site';
 
-    protected static ?string $pluralModelLabel = 'Godowns';
+    protected static ?string $pluralModelLabel = 'Sites';
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        
+        // If user is Site Incharge, only show their godowns
+        if (auth()->user() && auth()->user()->isSiteIncharge()) {
+            $query->where('vendor_id', auth()->id());
+        }
+        
+        return $query;
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('vendor_id')
-                    ->label('Vendor')
+                    ->label('Site Incharge')
                     ->relationship('vendor', 'name')
                     ->required()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->disabled(fn () => auth()->user() && auth()->user()->isSiteIncharge())
+                    ->default(fn () => auth()->user() && auth()->user()->isSiteIncharge() ? auth()->id() : null),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -63,7 +77,7 @@ class GodownResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('vendor.name')
-                    ->label('Vendor')
+                    ->label('Site Incharge')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
@@ -137,9 +151,10 @@ class GodownResource extends Resource
                             'dispatched_at' => now(),
                         ]);
 
-                        // Notify vendor
+                        // Notify Site Incharge
                         $record->vendor->notify(new CollectionJobCreatedNotification($job));
-                    }),
+                    })
+                    ->visible(fn () => auth()->user()?->isAdmin() ?? false),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -147,6 +162,33 @@ class GodownResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->check();
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->check();
+    }
+
+    public static function canEdit($record): bool
+    {
+        // Site Incharge can only edit their own godowns
+        if (auth()->user() && auth()->user()->isSiteIncharge()) {
+            return $record->vendor_id === auth()->id();
+        }
+        
+        // Admin can edit all
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        // Only admin can delete godowns
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function getRelations(): array
