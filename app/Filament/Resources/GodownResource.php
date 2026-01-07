@@ -159,6 +159,32 @@ class GodownResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('assign_vendor')
+                        ->label('Assign to Site Incharge')
+                        ->icon('heroicon-o-user-plus')
+                        ->color('primary')
+                        ->form([
+                            Forms\Components\Select::make('vendor_id')
+                                ->label('Site Incharge')
+                                ->options(function () {
+                                    return User::where('role', 'vendor')
+                                        ->orderBy('name')
+                                        ->pluck('name', 'id')
+                                        ->toArray();
+                                })
+                                ->required()
+                                ->searchable()
+                                ->preload()
+                                ->placeholder('Select a Site Incharge'),
+                        ])
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data) {
+                            $records->each(function (Godown $godown) use ($data) {
+                                $godown->update(['vendor_id' => $data['vendor_id']]);
+                            });
+                        })
+                        ->deselectRecordsAfterCompletion()
+                        ->successNotificationTitle('Selected sites have been assigned to the Site Incharge.')
+                        ->visible(fn () => auth()->user()?->isAdmin() ?? false),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
