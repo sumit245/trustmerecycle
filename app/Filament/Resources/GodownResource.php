@@ -125,7 +125,7 @@ class GodownResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('dispatch_truck')
-                    ->label('Dispatch Truck')
+                    ->label('Dispatch Truck Pickup')
                     ->icon('heroicon-o-truck')
                     ->color('success')
                     ->requiresConfirmation()
