@@ -112,10 +112,6 @@ class CollectionJobResource extends Resource
                         'truck_dispatched' => 'info',
                         'completed' => 'success',
                     }),
-                Tables\Columns\TextColumn::make('truck_details')
-                    ->label('Driver')
-                    ->formatStateUsing(fn ($state) => $state['driver_name'] ?? 'N/A')
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('collected_amount_mt')
                     ->label('Scrap weight')
                     ->suffix(' MT')
@@ -130,11 +126,11 @@ class CollectionJobResource extends Resource
                     ->disk('public')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('dispatched_at')
-                    ->dateTime()
+                    ->date('d/M/y')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('collected_at')
-                    ->dateTime()
+                    ->date('d/M/y')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')

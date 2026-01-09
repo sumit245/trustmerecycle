@@ -100,11 +100,13 @@ class CollectionJobResource extends Resource
                         'pending' => 'warning',
                         'truck_dispatched' => 'info',
                         'completed' => 'success',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'Pending',
+                        'truck_dispatched' => 'Truck Dispatched',
+                        'completed' => 'Completed',
+                        default => $state,
                     }),
-                Tables\Columns\TextColumn::make('truck_details')
-                    ->label('Driver')
-                    ->formatStateUsing(fn ($state) => $state['driver_name'] ?? 'N/A')
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('collected_amount_mt')
                     ->label('Scrap weight')
                     ->suffix(' MT')
@@ -119,11 +121,18 @@ class CollectionJobResource extends Resource
                     ->disk('public')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('dispatched_at')
-                    ->dateTime()
+                    ->date('d/M/y')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('collected_at')
-                    ->dateTime()
+                    ->label('Collected at')
+                    ->state(function ($record) {
+                        if ($record->collected_at === null) {
+                            return '<span style="color: #ef4444; font-weight: bold;">Not Picked Up</span>';
+                        }
+                        return $record->collected_at->format('d/M/y');
+                    })
+                    ->html()
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -147,7 +156,32 @@ class CollectionJobResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->modifyQueryUsing(function (Builder $query) {
+                // Get existing orders before modifying
+                $baseQuery = $query->getQuery();
+                $existingOrders = $baseQuery->orders ?? [];
+                
+                // Clear existing orders and rebuild with our priority first
+                $baseQuery->orders = [];
+                
+                // First: prioritize uncollected items (collected_at IS NULL)
+                $query->orderByRaw('collected_at IS NULL DESC');
+                
+                // Then: add back any existing orders (user sorting, etc.)
+                foreach ($existingOrders as $order) {
+                    if (isset($order['column'])) {
+                        $query->orderBy($order['column'], $order['direction'] ?? 'asc');
+                    } elseif (isset($order['sql'])) {
+                        $query->orderByRaw($order['sql']);
+                    }
+                }
+                
+                // If no other orders exist, add default ordering by created_at
+                if (empty($existingOrders)) {
+                    $query->orderBy('created_at', 'desc');
+                }
+            });
     }
 
     public static function canViewAny(): bool

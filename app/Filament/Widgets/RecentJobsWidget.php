@@ -15,7 +15,10 @@ class RecentJobsWidget extends BaseWidget
     {
         return $table
             ->query(
-                CollectionJob::query()->latest()->limit(10)
+                CollectionJob::query()
+                    ->orderByRaw('collected_at IS NULL DESC')
+                    ->orderBy('created_at', 'desc')
+                    ->limit(10)
             )
             ->columns([
                 Tables\Columns\TextColumn::make('godown.name')
@@ -27,14 +30,26 @@ class RecentJobsWidget extends BaseWidget
                         'pending' => 'warning',
                         'truck_dispatched' => 'info',
                         'completed' => 'success',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'Pending',
+                        'truck_dispatched' => 'Truck Dispatched',
+                        'completed' => 'Completed',
+                        default => $state,
                     }),
                 Tables\Columns\TextColumn::make('dispatched_at')
-                    ->dateTime()
+                    ->date('d/M/y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('collected_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->placeholder('Not collected'),
+                    ->label('Collected at')
+                    ->state(function ($record) {
+                        if ($record->collected_at === null) {
+                            return '<span style="color: #ef4444; font-weight: bold;">Not Picked Up</span>';
+                        }
+                        return $record->collected_at->format('d/M/y');
+                    })
+                    ->html()
+                    ->sortable(),
             ])
             ->heading('Recent Collection Jobs')
             ->description('Latest 10 collection jobs');

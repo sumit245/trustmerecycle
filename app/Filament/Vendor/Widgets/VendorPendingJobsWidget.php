@@ -35,11 +35,8 @@ class VendorPendingJobsWidget extends BaseWidget
                         'truck_dispatched' => 'info',
                         'completed' => 'success',
                     }),
-                Tables\Columns\TextColumn::make('truck_details')
-                    ->label('Driver')
-                    ->formatStateUsing(fn ($state) => $state['driver_name'] ?? 'N/A'),
                 Tables\Columns\TextColumn::make('dispatched_at')
-                    ->dateTime()
+                    ->date('d/M/y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
