@@ -1,0 +1,57 @@
+# Dependencies
+vendor/
+node_modules/
+
+# Logs
+storage/logs/
+logs/
+*.log
+
+# Cache / compiled
+storage/framework/cache/
+storage/framework/views/
+storage/framework/sessions/
+bootstrap/cache/
+.cache/
+
+# Build artifacts
+public/build/
+public/hot/
+public/mix-manifest.json
+
+# Minified Filament/vendor JS bundles (pollute graph with meaningless function names)
+public/js/
+
+# Generated / temp
+graphify-out/
+*.lock
+composer.lock
+package-lock.json
+yarn.lock
+
+# Media / binary
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.ico
+*.woff
+*.woff2
+*.ttf
+*.eot
+*.mp4
+*.mp3
+*.zip
+*.tar.gz
+*.pdf
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.swp
+
+# Env / secrets
+.env
+.env.*

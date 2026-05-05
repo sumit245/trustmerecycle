@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TrustMeRecycle API Docs</title>
+  <meta name="description" content="Interactive API documentation for the TrustMeRecycle Vendor Mobile API." />
+
+  <!-- Swagger UI CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+
+  <style>
+    /* ── Brand overrides ────────────────────────────────────── */
+    :root {
+      --brand-green:  #2e7d32;
+      --brand-light:  #4caf50;
+      --brand-dark:   #1b5e20;
+      --bg:           #f8faf8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+    }
+
+    /* Top nav bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-green) 100%);
+      padding: 14px 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .top-bar svg {
+      flex-shrink: 0;
+    }
+
+    .top-bar-text {
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .top-bar-text h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+
+    .top-bar-text p {
+      margin: 2px 0 0;
+      font-size: .78rem;
+      opacity: .85;
+    }
+
+    .badge {
+      margin-left: auto;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .5px;
+    }
+
+    /* Swagger UI wrapper */
+    #swagger-ui {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 16px 64px;
+    }
+
+    /* Hide default Swagger topbar (we have our own) */
+    .swagger-ui .topbar { display: none !important; }
+
+    /* Green accent for HTTP method badges */
+    .swagger-ui .opblock-summary-method {
+      border-radius: 4px !important;
+      min-width: 68px !important;
+    }
+
+    .swagger-ui .opblock.opblock-post .opblock-summary-method { background: #2e7d32 !important; }
+    .swagger-ui .opblock.opblock-get  .opblock-summary-method { background: #1565c0 !important; }
+
+    /* Authorize button */
+    .swagger-ui .btn.authorize { border-color: var(--brand-green) !important; color: var(--brand-green) !important; }
+    .swagger-ui .btn.authorize svg { fill: var(--brand-green) !important; }
+
+    /* Info block */
+    .swagger-ui .info .title { color: var(--brand-dark) !important; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Top navigation bar ── -->
+  <header class="top-bar">
+    <!-- Recycling icon -->
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2L8 7H11V13H13V7H16L12 2Z" fill="white"/>
+      <path d="M19.071 7.929L15.536 8.464L17.071 10L13.586 13.485L15 14.9L18.485 11.414L20.021 12.95L20.556 9.414L19.071 7.929Z" fill="white"/>
+      <path d="M4.929 7.929L3.444 9.414L3.979 12.95L5.515 11.414L9 14.9L10.414 13.485L6.929 10L8.464 8.464L4.929 7.929Z" fill="white"/>
+      <path d="M7 17H5L9 22L13 17H11V15H9V17H7Z" fill="white"/>
+      <path d="M15 17V15H13V17H11L15 22L19 17H15Z" fill="white" opacity="0"/>
+    </svg>
+
+    <div class="top-bar-text">
+      <h1>TrustMeRecycle — API Docs</h1>
+      <p>Vendor Mobile API &nbsp;·&nbsp; Laravel 11 + Sanctum</p>
+    </div>
+
+    <span class="badge">v1.0.0</span>
+  </header>
+
+  <!-- ── Swagger UI mount point ── -->
+  <div id="swagger-ui"></div>
+
+  <!-- Swagger UI JS -->
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+
+  <script>
+    window.onload = function () {
+      window.ui = SwaggerUIBundle({
+        url: './openapi.yaml',          // relative path to the spec file
+        dom_id: '#swagger-ui',
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset,
+        ],
+        layout: 'StandaloneLayout',
+        deepLinking: true,
+        displayRequestDuration: true,
+        defaultModelsExpandDepth: 2,
+        defaultModelExpandDepth: 2,
+        docExpansion: 'list',           // collapsed by default, click to expand
+        filter: true,                   // show search/filter box
+        tryItOutEnabled: true,          // enable "Try it out" for all operations
+        persistAuthorization: true,     // keep Bearer token between page reloads
+        requestSnippetsEnabled: true,   // show code snippets (cURL, etc.)
+      });
+    };
+  </script>
+</body>
+</html>

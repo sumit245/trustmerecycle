@@ -1,0 +1,648 @@
+openapi: "3.0.3"
+
+info:
+  title: "TrustMeRecycle - Vendor Mobile API"
+  description: "REST API for the TrustMeRecycle vendor (site-incharge) mobile application.\n\n## Authentication\nAll protected routes require a Laravel Sanctum Bearer token obtained via `POST /api/vendor/login`.\nPass the token in every subsequent request:\n\n```\nAuthorization: Bearer <your-token>\n```\n\n## Base URL\n| Environment | URL |\n|-------------|-----|\n| Local (XAMPP) | `http://localhost/trustmerecycle/public/api` |\n| Production | `https://your-domain.com/api` |\n\n## Error Format\nAll errors return JSON with a `message` key and an appropriate HTTP status code."
+  version: "1.0.0"
+  contact:
+    name: "TrustMeRecycle Engineering"
+  license:
+    name: "MIT"
+
+servers:
+  - url: "http://localhost/trustmerecycle/public/api"
+    description: "Local XAMPP development server"
+  - url: "https://your-domain.com/api"
+    description: "Production server"
+
+tags:
+  - name: "Authentication"
+    description: "Vendor login, logout, and profile endpoints"
+  - name: "Collection Jobs"
+    description: "Manage scrap collection jobs assigned to vendor godowns"
+
+components:
+  securitySchemes:
+    sanctumToken:
+      type: http
+      scheme: bearer
+      bearerFormat: Sanctum
+      description: "Laravel Sanctum API token with vendor ability. Obtain via POST /vendor/login."
+
+  schemas:
+    UserBasic:
+      type: object
+      description: "Minimal vendor profile fields returned on login."
+      properties:
+        id:
+          type: integer
+          example: 42
+        name:
+          type: string
+          example: "Ramesh Kumar"
+        email:
+          type: string
+          format: email
+          example: "ramesh@example.com"
+        phone:
+          type: string
+          nullable: true
+          example: "+91 98765 43210"
+
+    UserFull:
+      allOf:
+        - $ref: "#/components/schemas/UserBasic"
+        - type: object
+          properties:
+            profile_photo:
+              type: string
+              nullable: true
+              format: uri
+              description: "URL to the vendor's profile photo."
+              example: "https://example.com/storage/photos/ramesh.jpg"
+
+    Godown:
+      type: object
+      description: "A scrap storage site owned by a vendor."
+      properties:
+        id:
+          type: integer
+          example: 7
+        vendor_id:
+          type: integer
+          example: 42
+        name:
+          type: string
+          example: "Noida Sector 62 Godown"
+        location:
+          type: string
+          nullable: true
+          example: "Sector 62, Noida"
+        address:
+          type: string
+          nullable: true
+          example: "Plot 14, Industrial Area, Sector 62, Noida, UP"
+        capacity_limit_mt:
+          type: number
+          format: float
+          description: "Maximum storage capacity in metric tonnes."
+          example: 50.00
+        current_stock_mt:
+          type: number
+          format: float
+          description: "Current stock level in metric tonnes."
+          example: 23.50
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-10T08:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-04-25T12:30:00Z"
+
+    TruckDetails:
+      type: object
+      nullable: true
+      description: "Details about the truck dispatched for this job."
+      properties:
+        truck_number:
+          type: string
+          example: "UP14 AB 1234"
+        driver_name:
+          type: string
+          example: "Suresh Yadav"
+        driver_phone:
+          type: string
+          example: "+91 99887 76655"
+
+    CollectionJob:
+      type: object
+      description: "A scrap collection job assigned to a vendor's godown."
+      properties:
+        id:
+          type: integer
+          example: 101
+        godown_id:
+          type: integer
+          example: 7
+        status:
+          type: string
+          enum:
+            - pending
+            - truck_dispatched
+            - completed
+          description: "Lifecycle status: pending (awaiting dispatch), truck_dispatched (vendor can complete), completed (done)."
+          example: "truck_dispatched"
+        truck_details:
+          $ref: "#/components/schemas/TruckDetails"
+        collection_proof_image:
+          type: string
+          nullable: true
+          format: uri
+          description: "URL to the uploaded proof image (set after completion)."
+          example: "https://example.com/storage/collection-proofs/job101.jpg"
+        challan_image:
+          type: string
+          nullable: true
+          format: uri
+          description: "URL to the challan/invoice image."
+          example: "https://example.com/storage/challans/challan101.jpg"
+        collected_amount_mt:
+          type: number
+          format: float
+          nullable: true
+          description: "Scrap collected in metric tonnes (set after completion)."
+          example: 12.50
+        dispatched_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2025-04-28T09:00:00Z"
+        collected_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: "Timestamp when the job was marked completed."
+          example: "2025-04-28T14:30:00Z"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-04-27T07:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-04-28T14:30:00Z"
+
+    CollectionJobWithGodown:
+      allOf:
+        - $ref: "#/components/schemas/CollectionJob"
+        - type: object
+          properties:
+            godown:
+              $ref: "#/components/schemas/Godown"
+
+    PaginationLinks:
+      type: object
+      properties:
+        first:
+          type: string
+          format: uri
+          nullable: true
+          example: "http://localhost/trustmerecycle/public/api/vendor/jobs?page=1"
+        last:
+          type: string
+          format: uri
+          nullable: true
+          example: "http://localhost/trustmerecycle/public/api/vendor/jobs?page=5"
+        prev:
+          type: string
+          format: uri
+          nullable: true
+        next:
+          type: string
+          format: uri
+          nullable: true
+
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        from:
+          type: integer
+          nullable: true
+          example: 1
+        last_page:
+          type: integer
+          example: 5
+        per_page:
+          type: integer
+          example: 20
+        to:
+          type: integer
+          nullable: true
+          example: 20
+        total:
+          type: integer
+          example: 94
+
+    PaginatedCollectionJobs:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CollectionJobWithGodown"
+        links:
+          $ref: "#/components/schemas/PaginationLinks"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    Error401:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Invalid credentials."
+
+    Error403:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Access denied. Vendor account required."
+
+    Error422:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "The email field is required."
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          example:
+            email:
+              - "The email field is required."
+            password:
+              - "The password field is required."
+
+    ErrorGeneric:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Job cannot be completed - it is not in dispatched state."
+
+  responses:
+    Unauthenticated:
+      description: "Unauthenticated - missing or invalid Sanctum token."
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Unauthenticated."
+
+    Forbidden:
+      description: "Forbidden - token lacks required ability or resource does not belong to vendor."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorGeneric"
+
+    NotFound:
+      description: "Resource not found."
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "No query results for model CollectionJob."
+
+paths:
+
+  /vendor/login:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Vendor login"
+      operationId: "vendorLogin"
+      description: "Authenticates a vendor (site incharge) using email and password. Returns a Sanctum Bearer token valid until explicitly revoked. Any existing token for the same device_name is revoked before issuing a new one. The token carries the vendor ability and cannot access admin endpoints."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - device_name
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: "Vendor's registered email address."
+                  example: "ramesh@example.com"
+                password:
+                  type: string
+                  format: password
+                  description: "Vendor's account password."
+                  example: "secret123"
+                device_name:
+                  type: string
+                  maxLength: 255
+                  description: "Unique identifier for the device (e.g. phone model or UUID). Used to scope the token."
+                  example: "Ramesh Android Phone"
+            example:
+              email: "ramesh@example.com"
+              password: "secret123"
+              device_name: "Ramesh Android Phone"
+      responses:
+        "200":
+          description: "Login successful. Token and vendor profile returned."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: "Sanctum API token. Pass as Authorization: Bearer TOKEN in subsequent requests."
+                    example: "1|abc123XYZ..."
+                  user:
+                    $ref: "#/components/schemas/UserBasic"
+              example:
+                token: "1|abc123XYZ..."
+                user:
+                  id: 42
+                  name: "Ramesh Kumar"
+                  email: "ramesh@example.com"
+                  phone: "+91 98765 43210"
+        "401":
+          description: "Invalid credentials - email or password incorrect."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error401"
+        "403":
+          description: "Account exists but is not a vendor role."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error403"
+        "422":
+          description: "Validation failed - required fields missing or malformed."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error422"
+
+  /vendor/logout:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Vendor logout"
+      operationId: "vendorLogout"
+      description: "Invalidates (deletes) the current Sanctum API token. The token is no longer usable after this call."
+      security:
+        - sanctumToken: []
+      responses:
+        "200":
+          description: "Logged out successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logged out successfully."
+              example:
+                message: "Logged out successfully."
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+
+  /vendor/me:
+    get:
+      tags:
+        - "Authentication"
+      summary: "Get authenticated vendor profile"
+      operationId: "vendorMe"
+      description: "Returns the full profile of the currently authenticated vendor, including their profile photo URL."
+      security:
+        - sanctumToken: []
+      responses:
+        "200":
+          description: "Vendor profile data."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserFull"
+              example:
+                id: 42
+                name: "Ramesh Kumar"
+                email: "ramesh@example.com"
+                phone: "+91 98765 43210"
+                profile_photo: "https://example.com/storage/photos/ramesh.jpg"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+
+  /vendor/jobs:
+    get:
+      tags:
+        - "Collection Jobs"
+      summary: "List vendor's collection jobs"
+      operationId: "listVendorJobs"
+      description: "Returns a paginated list (20 per page) of all collection jobs across all godowns belonging to the authenticated vendor, ordered by newest first. Each job includes the associated godown object."
+      security:
+        - sanctumToken: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: "Page number for pagination."
+          example: 1
+      responses:
+        "200":
+          description: "Paginated list of collection jobs."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedCollectionJobs"
+              example:
+                data:
+                  - id: 101
+                    godown_id: 7
+                    status: "truck_dispatched"
+                    truck_details:
+                      truck_number: "UP14 AB 1234"
+                      driver_name: "Suresh Yadav"
+                      driver_phone: "+91 99887 76655"
+                    collection_proof_image: null
+                    challan_image: null
+                    collected_amount_mt: null
+                    dispatched_at: "2025-04-28T09:00:00Z"
+                    collected_at: null
+                    created_at: "2025-04-27T07:00:00Z"
+                    updated_at: "2025-04-28T09:00:00Z"
+                    godown:
+                      id: 7
+                      vendor_id: 42
+                      name: "Noida Sector 62 Godown"
+                      capacity_limit_mt: 50.00
+                      current_stock_mt: 23.50
+                links:
+                  first: "http://localhost/trustmerecycle/public/api/vendor/jobs?page=1"
+                  last: "http://localhost/trustmerecycle/public/api/vendor/jobs?page=5"
+                  prev: null
+                  next: "http://localhost/trustmerecycle/public/api/vendor/jobs?page=2"
+                meta:
+                  current_page: 1
+                  from: 1
+                  last_page: 5
+                  per_page: 20
+                  to: 20
+                  total: 94
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+
+  /vendor/jobs/{collectionJob}:
+    get:
+      tags:
+        - "Collection Jobs"
+      summary: "Get a single collection job"
+      operationId: "showVendorJob"
+      description: "Returns the full details of a specific collection job including its godown. The job must belong to one of the authenticated vendor's godowns, otherwise 403 is returned."
+      security:
+        - sanctumToken: []
+      parameters:
+        - name: collectionJob
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: "ID of the collection job."
+          example: 101
+      responses:
+        "200":
+          description: "Collection job details."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CollectionJobWithGodown"
+              example:
+                id: 101
+                godown_id: 7
+                status: "truck_dispatched"
+                truck_details:
+                  truck_number: "UP14 AB 1234"
+                  driver_name: "Suresh Yadav"
+                  driver_phone: "+91 99887 76655"
+                collection_proof_image: null
+                challan_image: null
+                collected_amount_mt: null
+                dispatched_at: "2025-04-28T09:00:00Z"
+                collected_at: null
+                created_at: "2025-04-27T07:00:00Z"
+                updated_at: "2025-04-28T09:00:00Z"
+                godown:
+                  id: 7
+                  vendor_id: 42
+                  name: "Noida Sector 62 Godown"
+                  capacity_limit_mt: 50.00
+                  current_stock_mt: 23.50
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /vendor/jobs/{collectionJob}/complete:
+    post:
+      tags:
+        - "Collection Jobs"
+      summary: "Mark a collection job as completed"
+      operationId: "completeVendorJob"
+      description: "Marks a dispatched collection job as completed by uploading the collected amount (metric tonnes) and a proof photo. Pre-conditions: job must belong to vendor's godown (else 403), and job status must be truck_dispatched (else 422). On success: status becomes completed, collected_amount_mt is set, proof image is stored, and collected_at is timestamped."
+      security:
+        - sanctumToken: []
+      parameters:
+        - name: collectionJob
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: "ID of the collection job to complete."
+          example: 101
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - collected_amount_mt
+                - proof_image
+              properties:
+                collected_amount_mt:
+                  type: number
+                  format: float
+                  minimum: 0.01
+                  description: "Actual scrap collected, in metric tonnes."
+                  example: 12.50
+                proof_image:
+                  type: string
+                  format: binary
+                  description: "Photo proof of the completed collection. Accepted formats: JPEG, PNG, GIF, WebP. Maximum size: 5 MB (5120 KB)."
+      responses:
+        "200":
+          description: "Job successfully marked as completed."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Job marked as completed."
+                  job:
+                    $ref: "#/components/schemas/CollectionJob"
+              example:
+                message: "Job marked as completed."
+                job:
+                  id: 101
+                  godown_id: 7
+                  status: "completed"
+                  truck_details:
+                    truck_number: "UP14 AB 1234"
+                    driver_name: "Suresh Yadav"
+                    driver_phone: "+91 99887 76655"
+                  collection_proof_image: "https://example.com/storage/collection-proofs/job101.jpg"
+                  challan_image: null
+                  collected_amount_mt: 12.50
+                  dispatched_at: "2025-04-28T09:00:00Z"
+                  collected_at: "2025-04-28T14:30:00Z"
+                  created_at: "2025-04-27T07:00:00Z"
+                  updated_at: "2025-04-28T14:30:00Z"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: "Validation error - fields failed validation or job is not in truck_dispatched state."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Error422"
+                  - $ref: "#/components/schemas/ErrorGeneric"
+              examples:
+                validationFailed:
+                  summary: "Missing required fields"
+                  value:
+                    message: "The collected amount mt field is required."
+                    errors:
+                      collected_amount_mt:
+                        - "The collected amount mt field is required."
+                wrongStatus:
+                  summary: "Job not in dispatched state"
+                  value:
+                    message: "Job cannot be completed - it is not in dispatched state."

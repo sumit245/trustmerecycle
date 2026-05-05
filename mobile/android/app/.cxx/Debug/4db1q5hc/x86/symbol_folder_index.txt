@@ -1,0 +1,1 @@
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/build/intermediates/cxx/Debug/4db1q5hc/obj/x86

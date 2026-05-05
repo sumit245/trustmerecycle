@@ -1,0 +1,49 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan *)",
+      "Bash(composer *)",
+      "Bash(git *)",
+      "Bash(npm *)",
+      "Bash(node *)",
+      "Bash(python3 *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(rm *)",
+      "Bash(chmod *)",
+      "Bash(touch *)",
+      "Bash(tail *)",
+      "Bash(head *)",
+      "Bash(wc *)",
+      "Bash(echo *)",
+      "Bash(curl *)",
+      "WebFetch(domain:laravel.com)",
+      "WebFetch(domain:filamentphp.com)",
+      "WebFetch(domain:packagist.org)",
+      "WebFetch(domain:github.com)"
+    ],
+    "deny": [
+      "Bash(* vendor/*)",
+      "Read(vendor/**)",
+      "Read(public/js/filament/**)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('file_path',''))\" 2>/dev/null || true); case \"$FILE\" in *.php) STEM=$(basename \"$FILE\" .php); cd /Applications/XAMPP/xamppfiles/htdocs/trustmerecycle && php artisan test --filter=\"$STEM\" 2>&1 | tail -10 || php artisan test --stop-on-failure 2>&1 | tail -10 ;; esac"
+          }
+        ]
+      }
+    ]
+  }
+}

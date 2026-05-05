@@ -1,0 +1,15 @@
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/CMakeFiles/appmodules.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/CMakeFiles/edit_cache.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/CMakeFiles/rebuild_cache.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/edit_cache.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/rebuild_cache.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/RNCNetInfoSpec_autolinked_build/CMakeFiles/react_codegen_RNCNetInfoSpec.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/RNCNetInfoSpec_autolinked_build/CMakeFiles/edit_cache.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/RNCNetInfoSpec_autolinked_build/CMakeFiles/rebuild_cache.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/safeareacontext_autolinked_build/CMakeFiles/edit_cache.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/safeareacontext_autolinked_build/CMakeFiles/rebuild_cache.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/rnscreens_autolinked_build/CMakeFiles/react_codegen_rnscreens.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/rnscreens_autolinked_build/CMakeFiles/edit_cache.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/arm64-v8a/rnscreens_autolinked_build/CMakeFiles/rebuild_cache.dir

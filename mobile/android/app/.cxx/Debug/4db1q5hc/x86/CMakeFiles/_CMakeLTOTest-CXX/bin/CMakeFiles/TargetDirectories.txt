@@ -1,0 +1,4 @@
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
+/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android/app/.cxx/Debug/4db1q5hc/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir

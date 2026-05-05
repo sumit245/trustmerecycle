@@ -1,0 +1,28 @@
+# node
+node_modules/
+.yarn/
+
+# Metro
+.metro-health-check*
+
+# Build outputs
+android/app/build/
+ios/build/
+ios/Pods/
+*.jsbundle
+
+# CocoaPods
+ios/Pods/
+
+# Env
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
