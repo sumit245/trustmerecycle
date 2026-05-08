@@ -1,8 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
-import { PaperProvider } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { lightTheme, darkTheme } from '../constants/paperTheme';
 import { Colors, ColorsDark } from '../constants/theme';
 
 type ThemeColors = typeof Colors;
@@ -41,13 +39,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const colors = isDark ? ColorsDark : Colors;
-  const paperTheme = isDark ? darkTheme : lightTheme;
-
   return (
     <ThemeContext.Provider value={{ isDark, colors, toggleTheme }}>
-      <PaperProvider theme={paperTheme}>
-        {children}
-      </PaperProvider>
+      {children}
     </ThemeContext.Provider>
   );
 }

@@ -52,8 +52,8 @@ A comprehensive Laravel 11 application for managing scrap recycling operations w
 - Password: `password`
 
 **Vendor 1:**
-- Email: `vendor1@trustmerecycle.com`
-- Password: `password`
+- Email: `vendor1@gmail.com`
+- Password: `vendor123`
 
 **Vendor 2:**
 - Email: `vendor2@trustmerecycle.com`

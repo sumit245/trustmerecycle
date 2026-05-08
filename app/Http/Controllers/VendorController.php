@@ -111,7 +111,7 @@ class VendorController extends Controller
         }
 
         // Store the proof image
-        $imagePath = $request->file('collection_proof_image')->store('proofs', 'public');
+        $imagePath = $request->file('collection_proof_image')->store('proofs', 'local');
 
         // Mark job as completed and reduce stock
         $job->markCompleted($request->collected_amount_mt, $imagePath);
@@ -120,4 +120,3 @@ class VendorController extends Controller
         return back()->with('success', 'Collection job completed successfully!');
     }
 }
-

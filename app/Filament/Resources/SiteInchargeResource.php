@@ -3,11 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SiteInchargeResource\Pages;
+use App\Filament\Resources\SiteInchargeResource\RelationManagers\GodownsRelationManager;
 use App\Models\User;
-use App\Models\Godown;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -85,28 +86,25 @@ class SiteInchargeResource extends Resource
                     ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('godowns_count')
-                    ->label('Sites Count')
+                    ->label('Sites Assigned')
                     ->counts('godowns')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('godowns.name')
-                    ->label('Sites')
-                    ->badge()
-                    ->separator(',')
-                    ->limit(3)
-                    ->tooltip(fn ($record) => $record->godowns->pluck('name')->join(', ')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\Filter::make('has_sites')
-                    ->label('Has Sites')
-                    ->query(fn (Builder $query): Builder => $query->has('godowns')),
-                Tables\Filters\Filter::make('no_sites')
-                    ->label('No Sites')
-                    ->query(fn (Builder $query): Builder => $query->doesntHave('godowns')),
+                Tables\Filters\TernaryFilter::make('sites')
+                    ->label('Sites')
+                    ->trueLabel('Has Sites')
+                    ->falseLabel('No Sites')
+                    ->queries(
+                        true: fn (Builder $query): Builder => $query->has('godowns'),
+                        false: fn (Builder $query): Builder => $query->doesntHave('godowns'),
+                    ),
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
@@ -123,7 +121,7 @@ class SiteInchargeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            GodownsRelationManager::class,
         ];
     }
 
@@ -142,4 +140,3 @@ class SiteInchargeResource extends Resource
         return auth()->user()?->isAdmin() ?? false;
     }
 }
-

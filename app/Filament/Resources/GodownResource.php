@@ -79,7 +79,9 @@ class GodownResource extends Resource
                 Tables\Columns\TextColumn::make('vendor.name')
                     ->label('Site Incharge')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(fn ($state) => $state ?: 'Unassigned')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
@@ -124,6 +126,11 @@ class GodownResource extends Resource
                     }),
             ])
             ->actions([
+                Tables\Actions\Action::make('view_collection_report')
+                    ->label('View Report')
+                    ->icon('heroicon-o-document-chart-bar')
+                    ->url(fn (Godown $record): string => route('admin.godowns.collection-report', $record))
+                    ->openUrlInNewTab(false),
                 Tables\Actions\Action::make('dispatch_truck')
                     ->label('Dispatch Truck Pickup')
                     ->icon('heroicon-o-truck')
@@ -160,9 +167,11 @@ class GodownResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('assign_vendor')
-                        ->label('Assign to Site Incharge')
+                        ->label('Advanced: Bulk Assign to Site Incharge')
                         ->icon('heroicon-o-user-plus')
                         ->color('primary')
+                        ->modalHeading('Bulk Assign Sites')
+                        ->modalDescription('Use this for assigning multiple sites at once. For a single site or vendor-specific management, use the Site Incharge page.')
                         ->form([
                             Forms\Components\Select::make('vendor_id')
                                 ->label('Site Incharge')
@@ -183,7 +192,7 @@ class GodownResource extends Resource
                             });
                         })
                         ->deselectRecordsAfterCompletion()
-                        ->successNotificationTitle('Selected sites have been assigned to the Site Incharge.')
+                        ->successNotificationTitle('Selected sites have been bulk assigned to the Site Incharge.')
                         ->visible(fn () => auth()->user()?->isAdmin() ?? false),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
@@ -233,4 +242,3 @@ class GodownResource extends Resource
         ];
     }
 }
-

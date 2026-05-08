@@ -6,7 +6,6 @@ use App\Filament\Resources\CollectionJobResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Support\Facades\Storage;
 
 class ViewCollectionJob extends ViewRecord
 {
@@ -50,7 +49,7 @@ class ViewCollectionJob extends ViewRecord
                             return new \Illuminate\Support\HtmlString('<p class="text-sm text-gray-500 italic">No scrap image uploaded</p>');
                         }
                         
-                        $imageUrl = Storage::disk('public')->url($record->collection_proof_image);
+                        $imageUrl = $record->collection_proof_image_url;
                         $fileName = basename($record->collection_proof_image);
                         
                         return new \Illuminate\Support\HtmlString(
@@ -67,7 +66,7 @@ class ViewCollectionJob extends ViewRecord
                             return new \Illuminate\Support\HtmlString('<p class="text-sm text-gray-500 italic">No challan image uploaded</p>');
                         }
                         
-                        $imageUrl = Storage::disk('public')->url($record->challan_image);
+                        $imageUrl = $record->challan_image_url;
                         $fileName = basename($record->challan_image);
                         
                         return new \Illuminate\Support\HtmlString(
@@ -84,4 +83,3 @@ class ViewCollectionJob extends ViewRecord
             ]);
     }
 }
-

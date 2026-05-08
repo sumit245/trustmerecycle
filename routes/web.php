@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\Admin\GodownCollectionReportController;
+use App\Http\Controllers\ProtectedFileController;
 use App\Http\Controllers\VendorManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +20,13 @@ require __DIR__.'/auth.php';
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('vendors', VendorManagementController::class)->except(['show', 'edit', 'update']);
     Route::post('vendors/import', [VendorManagementController::class, 'import'])->name('vendors.import');
+
+    Route::get('/admin/godowns/{godown}/view', [GodownCollectionReportController::class, 'show'])
+        ->name('admin.godowns.collection-report');
+    Route::get('/admin/godowns/{godown}/view/excel', [GodownCollectionReportController::class, 'excel'])
+        ->name('admin.godowns.collection-report.excel');
+    Route::get('/admin/godowns/{godown}/view/pdf', [GodownCollectionReportController::class, 'pdf'])
+        ->name('admin.godowns.collection-report.pdf');
 });
 
 // Vendor routes (legacy - redirecting to Filament panel)
@@ -28,4 +37,10 @@ Route::middleware(['auth', 'vendor'])->prefix('vendor')->name('vendor.')->group(
     })->name('dashboard');
     // Keep job completion route for now (can be migrated to Filament action later if needed)
     Route::post('/job/{job}/complete', [VendorController::class, 'completeJob'])->name('job.complete');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/collection-jobs/{collectionJob}/{field}', [ProtectedFileController::class, 'show'])
+        ->whereIn('field', ['collection_proof_image', 'challan_image'])
+        ->name('collection-jobs.file');
 });

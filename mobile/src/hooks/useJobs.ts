@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { fetchJobs, markJobPickedUp, ApiError } from '../services/api';
+import { fetchJobs, completeJob, ApiError } from '../services/api';
 import { useApp } from '../context/AppContext';
 import type { CollectionJob } from '../types';
 
@@ -10,7 +10,7 @@ interface UseJobsReturn {
   error: string | null;
   loadJobs: () => Promise<void>;
   refresh: () => Promise<void>;
-  pickUp: (jobId: number) => Promise<void>;
+  pickUp: (jobId: number, collectedAmountMT: number, proofImageUri: string) => Promise<void>;
 }
 
 export function useJobs(): UseJobsReturn {
@@ -45,22 +45,20 @@ export function useJobs(): UseJobsReturn {
   const refresh = useCallback(() => load(true), [load]);
 
   const pickUp = useCallback(
-    async (jobId: number) => {
+    async (jobId: number, collectedAmountMT: number, proofImageUri: string) => {
       if (!state.token) return;
       setError(null);
 
-      // Optimistic update
       dispatch({ type: 'UPDATE_JOB_STATUS', payload: { id: jobId, status: 'picked_up' } });
 
       try {
-        await markJobPickedUp(jobId, state.token);
+        await completeJob(jobId, state.token, collectedAmountMT, proofImageUri);
       } catch (err) {
-        // Revert optimistic update on failure
         dispatch({ type: 'UPDATE_JOB_STATUS', payload: { id: jobId, status: 'dispatched' } });
         const msg =
           err instanceof ApiError ? err.message : 'Could not update job.';
         setError(msg);
-        throw err; // let screen handle toast/alert
+        throw err;
       }
     },
     [state.token, dispatch],

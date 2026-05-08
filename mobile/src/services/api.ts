@@ -6,7 +6,7 @@ import type {
 } from '../types';
 
 const BASE_URL = __DEV__
-  ? 'http://192.168.1.7:8000/api'
+  ? 'http://10.0.2.2:8000/api'
   : 'https://api.trustmerecycle.in/api';
 
 const DEFAULT_TIMEOUT_MS = 15_000;

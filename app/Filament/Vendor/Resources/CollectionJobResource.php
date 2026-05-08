@@ -11,7 +11,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class CollectionJobResource extends Resource
 {
@@ -52,7 +51,7 @@ class CollectionJobResource extends Resource
                             return new \Illuminate\Support\HtmlString('<p class="text-sm text-gray-500 italic">No scrap image uploaded</p>');
                         }
                         
-                        $imageUrl = Storage::disk('public')->url($record->collection_proof_image);
+                        $imageUrl = $record->collection_proof_image_url;
                         $fileName = basename($record->collection_proof_image);
                         
                         return new \Illuminate\Support\HtmlString(
@@ -69,7 +68,7 @@ class CollectionJobResource extends Resource
                             return new \Illuminate\Support\HtmlString('<p class="text-sm text-gray-500 italic">No challan image uploaded</p>');
                         }
                         
-                        $imageUrl = Storage::disk('public')->url($record->challan_image);
+                        $imageUrl = $record->challan_image_url;
                         $fileName = basename($record->challan_image);
                         
                         return new \Illuminate\Support\HtmlString(
@@ -119,11 +118,9 @@ class CollectionJobResource extends Resource
                     ->toggleable(),
                 Tables\Columns\ImageColumn::make('collection_proof_image')
                     ->label('Scrap')
-                    ->disk('public')
                     ->toggleable(),
                 Tables\Columns\ImageColumn::make('challan_image')
                     ->label('Challan')
-                    ->disk('public')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('dispatched_at')
                     ->date('d/M/y')
@@ -158,8 +155,8 @@ class CollectionJobResource extends Resource
                             ->label('Collection Proof Image')
                             ->image()
                             ->directory('proofs')
-                            ->disk('public')
-                            ->visibility('public')
+                            ->disk('local')
+                            ->visibility('private')
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
                             ->maxSize(5120)
                             ->required()
@@ -237,4 +234,3 @@ class CollectionJobResource extends Resource
         ];
     }
 }
-

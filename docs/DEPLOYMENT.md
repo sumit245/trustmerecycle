@@ -148,7 +148,7 @@ If installed directly in `public_html`:
 2. You should see the welcome page or login page
 3. Test login with seeded credentials:
    - **Admin**: `admin@trustmerecycle.com` / `password`
-   - **Vendor 1**: `vendor1@trustmerecycle.com` / `password`
+   - **Vendor 1**: `vendor1@gmail.com` / `vendor123`
    - **Vendor 2**: `vendor2@trustmerecycle.com` / `password`
 
 ## Step 10: Admin Panel Access
@@ -250,4 +250,3 @@ For issues specific to:
 ---
 
 **Note**: This application requires PHP 8.2+ and MySQL 5.7+. Ensure your Hostinger hosting plan supports these requirements.
-

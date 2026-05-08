@@ -83,7 +83,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/node_modules/react-native-gesture-handler/RNGestureHandler.podspec",
-          "version": "2.31.1",
+          "version": "2.31.2",
           "configurations": [],
           "scriptPhases": []
         },
@@ -228,7 +228,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/node_modules/react-native-share/RNShare.podspec",
-          "version": "12.2.6",
+          "version": "12.3.1",
           "configurations": [],
           "scriptPhases": []
         },
@@ -265,6 +265,31 @@
           "libraryName": "RNVectorIconsSpec",
           "componentDescriptors": [],
           "cmakeListsPath": "/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
+    "react-native-worklets": {
+      "root": "/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/node_modules/react-native-worklets",
+      "name": "react-native-worklets",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/node_modules/react-native-worklets/RNWorklets.podspec",
+          "version": "0.8.3",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/node_modules/react-native-worklets/android",
+          "packageImportPath": "import com.swmansion.worklets.WorkletsPackage;",
+          "packageInstance": "new WorkletsPackage()",
+          "buildTypes": [],
+          "libraryName": "rnworklets",
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/node_modules/react-native-worklets/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -491,8 +516,7 @@
         },
         {
           "name": "--terminal <string>",
-          "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "vscode"
+          "description": "Launches the Metro Bundler in a new window using the specified terminal path."
         },
         {
           "name": "--binary-path <string>",
@@ -659,8 +683,7 @@
         },
         {
           "name": "--terminal <string>",
-          "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "vscode"
+          "description": "Launches the Metro Bundler in a new window using the specified terminal path."
         },
         {
           "name": "--appId <string>",
@@ -746,8 +769,8 @@
     "android": {
       "sourceDir": "/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android",
       "appName": "app",
-      "packageName": "com.trustmerecyclemobile",
-      "applicationId": "com.trustmerecyclemobile",
+      "packageName": "com.decideprecise.scrapcollector",
+      "applicationId": "com.decideprecise.scrapcollector",
       "mainActivity": ".MainActivity",
       "assets": []
     }

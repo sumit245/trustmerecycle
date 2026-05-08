@@ -1,4 +1,4 @@
-package com.trustmerecyclemobile
+package com.decideprecise.scrapcollector
 
 import android.app.Application
 import com.facebook.react.PackageList

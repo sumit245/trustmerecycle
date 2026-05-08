@@ -1,51 +1,37 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { BigButton } from './BigButton';
+import { CompleteJobModal } from './CompleteJobModal';
 import { StatusBadge } from './StatusBadge';
 import { Colors, Radius, Shadow, Spacing, Typography } from '../constants/theme';
 import type { CollectionJob } from '../types';
 
 interface JobCardProps {
   job: CollectionJob;
-  onPickUp: (id: number) => Promise<void>;
+  onPickUp: (id: number, amount: number, proofUri: string) => Promise<void>;
 }
 
 export function JobCard({ job, onPickUp }: JobCardProps) {
-  const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const isActionable = job.status === 'dispatched' || job.status === 'pending';
 
-  const handlePickUp = () => {
-    Alert.alert(
-      'Mark as Picked Up?',
-      `Confirm pickup for ${job.godown_name}`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Yes, Picked Up',
-          style: 'default',
-          onPress: async () => {
-            setLoading(true);
-            try {
-              await onPickUp(job.id);
-            } catch {
-              Alert.alert('Error', 'Could not update. Try again.');
-            } finally {
-              setLoading(false);
-            }
-          },
-        },
-      ],
-      { cancelable: true },
-    );
+  const handleSubmit = async (amount: number, proofUri: string) => {
+    await onPickUp(job.id, amount, proofUri);
+    setModalVisible(false);
   };
 
   return (
     <View style={styles.card} accessibilityRole="none">
+      <CompleteJobModal
+        visible={modalVisible}
+        godownName={job.godown_name}
+        onCancel={() => setModalVisible(false)}
+        onSubmit={handleSubmit}
+      />
       <View style={styles.header}>
         <Text style={styles.name} numberOfLines={1}>
           {job.godown_name}
@@ -74,8 +60,7 @@ export function JobCard({ job, onPickUp }: JobCardProps) {
           <BigButton
             label="Mark as Picked Up"
             variant="success"
-            loading={loading}
-            onPress={handlePickUp}
+            onPress={() => setModalVisible(true)}
           />
         </View>
       ) : job.status === 'completed' ? (

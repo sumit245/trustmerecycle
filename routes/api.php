@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Public: login (no token required)
-Route::post('/vendor/login', [AuthController::class, 'login']);
+Route::post('/vendor/login', [AuthController::class, 'login'])
+    ->middleware('throttle:vendor-login');
 
 // Protected: all routes below require a valid Sanctum token with 'vendor' ability
 Route::middleware(['auth:sanctum', 'ability:vendor'])->prefix('vendor')->group(function () {

@@ -42,8 +42,8 @@ class UserSeeder extends Seeder
         // Create vendor 1
         $vendor1 = User::create([
             'name' => 'Vendor One',
-            'email' => 'vendor1@trustmerecycle.com',
-            'password' => Hash::make('password'),
+            'email' => 'vendor1@gmail.com',
+            'password' => Hash::make('vendor123'),
             'role' => 'vendor',
             'phone' => '+91-9876543211',
         ]);
@@ -106,4 +106,3 @@ class UserSeeder extends Seeder
         ]);
     }
 }
-

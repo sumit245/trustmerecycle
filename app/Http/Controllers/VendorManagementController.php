@@ -148,7 +148,7 @@ class VendorManagementController extends Controller
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return back()->with('error', 'Error importing Site Incharges: ' . $e->getMessage() . '. Check Laravel logs for details.');
+            return back()->with('error', 'Error importing Site Incharges. Check Laravel logs for details.');
         }
     }
 
@@ -166,4 +166,3 @@ class VendorManagementController extends Controller
         return response()->json(['success' => true, 'message' => 'Site Incharge deleted successfully!']);
     }
 }
-

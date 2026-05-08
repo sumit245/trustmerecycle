@@ -52,7 +52,7 @@ class VendorCollectionJobController extends Controller
             ], 422);
         }
 
-        $path = $request->file('proof_image')->store('collection-proofs', 'public');
+        $path = $request->file('proof_image')->store('collection-proofs', 'local');
 
         $collectionJob->markCompleted($request->collected_amount_mt, $path);
 

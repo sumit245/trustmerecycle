@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
 class CollectionJob extends Model
 {
@@ -83,7 +82,10 @@ class CollectionJob extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->collection_proof_image);
+        return route('collection-jobs.file', [
+            'collectionJob' => $this->id,
+            'field' => 'collection_proof_image',
+        ]);
     }
 
     /**
@@ -95,7 +97,9 @@ class CollectionJob extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->challan_image);
+        return route('collection-jobs.file', [
+            'collectionJob' => $this->id,
+            'field' => 'challan_image',
+        ]);
     }
 }
-

@@ -22,15 +22,15 @@ class ViewCollectionJob extends ViewRecord
                 ->color('success')
                 ->requiresConfirmation()
                 ->form([
-                    Forms\Components\FileUpload::make('collection_proof_image')
-                        ->label('Collection Proof Image')
-                        ->image()
-                        ->directory('proofs')
-                        ->disk('public')
-                        ->visibility('public')
-                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
-                        ->maxSize(5120)
-                        ->required()
+                        Forms\Components\FileUpload::make('collection_proof_image')
+                            ->label('Collection Proof Image')
+                            ->image()
+                            ->directory('proofs')
+                            ->disk('local')
+                            ->visibility('private')
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
+                            ->maxSize(5120)
+                            ->required()
                         ->helperText('Upload photo of empty godown or truck loading (Max 5MB, JPG/PNG)'),
                     Forms\Components\TextInput::make('collected_amount_mt')
                         ->label('Collected Amount (MT)')
@@ -82,4 +82,3 @@ class ViewCollectionJob extends ViewRecord
         ];
     }
 }
-

@@ -56,16 +56,16 @@ class CollectionJobResource extends Resource
                     ->label('Scrap Image')
                     ->image()
                     ->directory('proofs')
-                    ->disk('public')
-                    ->visibility('public')
+                    ->disk('local')
+                    ->visibility('private')
                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
                     ->maxSize(5120),
                 Forms\Components\FileUpload::make('challan_image')
                     ->label('Challan')
                     ->image()
                     ->directory('challans')
-                    ->disk('public')
-                    ->visibility('public')
+                    ->disk('local')
+                    ->visibility('private')
                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
                     ->maxSize(5120),
                 Forms\Components\DateTimePicker::make('dispatched_at'),
@@ -112,13 +112,11 @@ class CollectionJobResource extends Resource
                     ->suffix(' MT')
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\ImageColumn::make('collection_proof_image')
+                Tables\Columns\ImageColumn::make('collection_proof_image_url')
                     ->label('Scrap')
-                    ->disk('public')
                     ->toggleable(),
-                Tables\Columns\ImageColumn::make('challan_image')
+                Tables\Columns\ImageColumn::make('challan_image_url')
                     ->label('Challan')
-                    ->disk('public')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('dispatched_at')
                     ->date('d/M/y')
@@ -223,4 +221,3 @@ class CollectionJobResource extends Resource
         ];
     }
 }
-
