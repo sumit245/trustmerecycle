@@ -66,7 +66,10 @@ async function request<T>(
       signal: controller.signal,
     });
 
-    if (res.status === 401) {
+    // A 401 only means "session expired" when we actually sent a token.
+    // On the login/register endpoints (no token) a 401 is a credentials
+    // error and must surface the server's message ("Invalid credentials.").
+    if (res.status === 401 && token) {
       throw new SessionExpiredError();
     }
 
