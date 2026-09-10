@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -16,23 +18,39 @@ class AuthController extends Controller
      */
     public function login(VendorLoginRequest $request): JsonResponse
     {
+        $throttleKey = 'vendor-login|'.Str::lower((string) $request->email).'|'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            return response()->json([
+                'message' => 'Too many login attempts. Please try again in '
+                    .RateLimiter::availableIn($throttleKey).' seconds.',
+            ], 429);
+        }
+
         $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
+            RateLimiter::hit($throttleKey, 60);
+
             return response()->json([
                 'message' => 'Invalid credentials.',
             ], 401);
         }
 
         if (! $user->isVendor()) {
+            RateLimiter::hit($throttleKey, 60);
+
             return response()->json([
                 'message' => 'Access denied. Vendor account required.',
             ], 403);
         }
 
-        // Revoke any existing token for this device before issuing a new one
-        $user->tokens()->where('name', $request->device_name)->delete();
+        // Successful login clears the failed-attempt counter.
+        RateLimiter::clear($throttleKey);
 
+        // Issue a fresh token. We deliberately do NOT revoke the user's other
+        // tokens: the mobile client sends a constant device_name, so revoking
+        // by name would sign the vendor out on any other device they use.
         $token = $user->createToken($request->device_name, ['vendor'])->plainTextToken;
 
         return response()->json([

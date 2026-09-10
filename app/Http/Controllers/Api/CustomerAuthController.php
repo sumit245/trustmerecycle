@@ -67,8 +67,9 @@ class CustomerAuthController extends Controller
 
     private function tokenPayload(User $user, string $deviceName): array
     {
-        $user->tokens()->where('name', $deviceName)->delete();
-
+        // Issue a fresh token without revoking the customer's other tokens:
+        // the mobile client sends a constant device_name, so revoking by name
+        // would sign the customer out on any other device they use.
         return [
             'token' => $user->createToken($deviceName, ['customer'])->plainTextToken,
             'user' => $this->userPayload($user),

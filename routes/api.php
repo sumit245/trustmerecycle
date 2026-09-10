@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Public: login (no token required)
-Route::post('/vendor/login', [AuthController::class, 'login'])
-    ->middleware('throttle:vendor-login');
+// Public: login (no token required). Throttling of failed attempts is handled
+// inside AuthController::login so a correct password is never rate-limited.
+Route::post('/vendor/login', [AuthController::class, 'login']);
 
 // Public: customer auth
 Route::post('/customer/register', [CustomerAuthController::class, 'register'])

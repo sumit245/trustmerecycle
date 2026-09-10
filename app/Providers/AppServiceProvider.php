@@ -35,10 +35,13 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($key);
         });
 
+        // Used by the customer auth routes. Vendor login throttles failed
+        // attempts inside AuthController instead, so a correct password is
+        // never blocked.
         RateLimiter::for('vendor-login', function (Request $request) {
             $key = Str::lower((string) $request->input('email')) . '|' . $request->ip();
 
-            return Limit::perMinute(5)->by($key);
+            return Limit::perMinute(20)->by($key);
         });
     }
 }
