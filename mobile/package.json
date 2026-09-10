@@ -1,8 +1,8 @@
 {
-  "name": "scrap-collector",
-  "package": "com.decideprecise.scrapcollector",
-  "displayName": "Scrap Collector",
-  "version": "1.0.0",
+  "name": "trustmerecycle",
+  "package": "com.dashandots.trustmerecycle",
+  "displayName": "TrustMe Recycle",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

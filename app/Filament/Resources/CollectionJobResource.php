@@ -37,6 +37,13 @@ class CollectionJobResource extends Resource
                         // Admin can select all godowns
                         return \App\Models\Godown::pluck('name', 'id')->toArray();
                     }),
+                Forms\Components\Select::make('pickup_request_id')
+                    ->label('Customer Pickup Request')
+                    ->relationship('pickupRequest', 'id')
+                    ->searchable()
+                    ->preload()
+                    ->getOptionLabelFromRecordUsing(fn ($record): string => '#' . $record->id . ' - ' . $record->customer_name)
+                    ->nullable(),
                 Forms\Components\Select::make('status')
                     ->options([
                         'pending' => 'Pending',
@@ -94,6 +101,10 @@ class CollectionJobResource extends Resource
                     ->label('Site')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('pickupRequest.customer_name')
+                    ->label('Customer')
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {

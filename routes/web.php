@@ -13,6 +13,8 @@ Route::get('/', function () {
     return redirect('/admin/login');
 });
 
+Route::view('/privacy-policy', 'privacy-policy')->name('privacy-policy');
+
 // Authentication routes (will be added by Breeze)
 require __DIR__.'/auth.php';
 

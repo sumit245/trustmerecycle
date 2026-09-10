@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Colors, Radius, Spacing, Typography } from '../constants/theme';
-import type { JobStatus, RequestStatus } from '../types';
+import type { JobStatus, PickupRequestStatus } from '../types';
 
-type AnyStatus = JobStatus | RequestStatus;
+type AnyStatus = JobStatus | PickupRequestStatus;
 
 interface StatusBadgeProps {
   status: AnyStatus;
@@ -11,17 +11,29 @@ interface StatusBadgeProps {
 }
 
 const CONFIG: Record<AnyStatus, { label: string; bg: string; text: string; dot: string }> = {
-  not_picked_up: {
-    label: 'Not Picked Up',
+  pending_review: {
+    label: 'Pending Review',
     bg: Colors.pendingLight,
     text: Colors.pending,
     dot: Colors.pending,
   },
-  picked_up: {
-    label: 'Picked Up ✓',
-    bg: Colors.pickedUpLight,
-    text: Colors.pickedUp,
-    dot: Colors.pickedUp,
+  assigned: {
+    label: 'Assigned',
+    bg: Colors.dispatchedLight,
+    text: Colors.dispatched,
+    dot: Colors.dispatched,
+  },
+  truck_dispatched: {
+    label: 'Truck Dispatched',
+    bg: Colors.dispatchedLight,
+    text: Colors.dispatched,
+    dot: Colors.dispatched,
+  },
+  cancelled: {
+    label: 'Cancelled',
+    bg: Colors.pendingLight,
+    text: Colors.pending,
+    dot: Colors.pending,
   },
   pending: {
     label: 'Pending',
@@ -37,6 +49,12 @@ const CONFIG: Record<AnyStatus, { label: string; bg: string; text: string; dot: 
   },
   completed: {
     label: 'Done ✓',
+    bg: Colors.pickedUpLight,
+    text: Colors.pickedUp,
+    dot: Colors.pickedUp,
+  },
+  picked_up: {
+    label: 'Picked Up ✓',
     bg: Colors.pickedUpLight,
     text: Colors.pickedUp,
     dot: Colors.pickedUp,

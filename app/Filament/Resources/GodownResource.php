@@ -15,6 +15,14 @@ use Illuminate\Database\Eloquent\Builder;
 
 class GodownResource extends Resource
 {
+    private const STATES = [
+        'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+        'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+        'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
+        'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+        'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi',
+    ];
+
     protected static ?string $model = Godown::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
@@ -55,6 +63,13 @@ class GodownResource extends Resource
                 Forms\Components\TextInput::make('location')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Select::make('state')
+                    ->options(array_combine(self::STATES, self::STATES))
+                    ->searchable()
+                    ->required(),
+                Forms\Components\TextInput::make('city')
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\Textarea::make('address')
                     ->required()
                     ->rows(3),
@@ -87,6 +102,12 @@ class GodownResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('location')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('city')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('state')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('current_stock_mt')
                     ->label('Current Stock')
                     ->suffix(' MT')

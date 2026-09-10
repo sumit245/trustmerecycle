@@ -12,6 +12,7 @@ class CollectionJob extends Model
 
     protected $fillable = [
         'godown_id',
+        'pickup_request_id',
         'status',
         'truck_details',
         'collection_proof_image',
@@ -34,6 +35,26 @@ class CollectionJob extends Model
     public function godown(): BelongsTo
     {
         return $this->belongsTo(Godown::class);
+    }
+
+    /**
+     * Get the customer pickup request linked to this job.
+     */
+    public function pickupRequest(): BelongsTo
+    {
+        return $this->belongsTo(PickupRequest::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(function (CollectionJob $job): void {
+            if (
+                $job->pickupRequest
+                && $job->wasChanged(['status', 'collected_at', 'pickup_request_id'])
+            ) {
+                $job->pickupRequest->syncFromCollectionJob($job);
+            }
+        });
     }
 
     /**

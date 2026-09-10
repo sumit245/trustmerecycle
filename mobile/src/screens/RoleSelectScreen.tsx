@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Image,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -8,26 +7,12 @@ import {
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { BigButton } from '../components/BigButton';
-import { useApp } from '../context/AppContext';
-import { buildLocalRequest } from '../services/api';
 import { Colors, Spacing, Typography } from '../constants/theme';
 import type { RootStackParamList } from '../types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RoleSelect'>;
 
 export function RoleSelectScreen({ navigation }: Props) {
-  const { dispatch } = useApp();
-
-  const enterAsCustomer = () => {
-    const user = {
-      id: `cust_${Date.now()}`,
-      name: 'Customer',
-      role: 'customer' as const,
-    };
-    dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: null } });
-    dispatch({ type: 'SET_CUSTOMER_REQUEST', payload: buildLocalRequest() });
-  };
-
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
@@ -45,8 +30,8 @@ export function RoleSelectScreen({ navigation }: Props) {
           <BigButton
             label="I want to give scrap"
             variant="primary"
-            onPress={enterAsCustomer}
-            accessibilityHint="Opens the customer scrap request screen"
+            onPress={() => navigation.navigate('CustomerAuth')}
+            accessibilityHint="Opens customer login and registration"
           />
 
           <View style={styles.divider}>

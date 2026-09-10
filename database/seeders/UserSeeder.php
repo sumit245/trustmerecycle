@@ -53,6 +53,8 @@ class UserSeeder extends Seeder
             'vendor_id' => $vendor1->id,
             'name' => 'North Godown',
             'location' => 'North Zone',
+            'state' => 'Delhi',
+            'city' => 'New Delhi',
             'address' => '123 North Street, Industrial Area',
             'capacity_limit_mt' => 100.00,
             'current_stock_mt' => 85.50, // Near capacity
@@ -83,6 +85,8 @@ class UserSeeder extends Seeder
             'vendor_id' => $vendor2->id,
             'name' => 'South Godown',
             'location' => 'South Zone',
+            'state' => 'Karnataka',
+            'city' => 'Bengaluru',
             'address' => '456 South Avenue, Commercial Area',
             'capacity_limit_mt' => 150.00,
             'current_stock_mt' => 45.25, // Normal stock
@@ -104,5 +108,35 @@ class UserSeeder extends Seeder
             'godown_id' => $godown1->id,
             'status' => 'pending',
         ]);
+
+        // Lucknow sites (Uttar Pradesh)
+        $lucknowSites = [
+            ['name' => 'Lucknow Vikas Nagar Sec 9',  'location' => 'ES68'],
+            ['name' => 'Lucknow Ruchi Khand',          'location' => 'ES70'],
+            ['name' => 'Lucknow Vineet Khand',         'location' => 'ES64'],
+            ['name' => 'Lucknow Indira Nagar',         'location' => 'ES72'],
+            ['name' => 'Lucknow Burlington',           'location' => 'ES32'],
+            ['name' => 'Lucknow Malhaur',              'location' => 'ES44'],
+            ['name' => 'Lucknow Golf City',            'location' => 'ES45'],
+            ['name' => 'Lucknow Eldeco',               'location' => 'ES47'],
+            ['name' => 'Lucknow Ruchi Khand',          'location' => 'ES48'],
+            ['name' => 'Lucknow Chowk',                'location' => 'ES50'],
+            ['name' => 'Lucknow Aliganj',              'location' => 'ES55'],
+            ['name' => 'Lucknow IIM Road',             'location' => 'ES56'],
+            ['name' => 'Lucknow Integral Kursi Road',  'location' => 'ES58'],
+            ['name' => 'Lucknow Akash Enclave',        'location' => 'ES59'],
+        ];
+
+        foreach ($lucknowSites as $site) {
+            Godown::create([
+                'name'              => $site['name'],
+                'location'          => $site['location'],
+                'state'             => 'Uttar Pradesh',
+                'city'              => 'Lucknow',
+                'address'           => $site['name'] . ', Lucknow, Uttar Pradesh',
+                'capacity_limit_mt' => 50.00,
+                'current_stock_mt'  => 0.00,
+            ]);
+        }
     }
 }

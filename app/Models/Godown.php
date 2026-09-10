@@ -15,6 +15,8 @@ class Godown extends Model
         'vendor_id',
         'name',
         'location',
+        'state',
+        'city',
         'address',
         'capacity_limit_mt',
         'current_stock_mt',
@@ -85,4 +87,3 @@ class Godown extends Model
         return $this->current_stock_mt >= $this->capacity_limit_mt;
     }
 }
-

@@ -6,12 +6,15 @@ export interface VendorUser {
   id: number;
   name: string;
   email: string;
+  phone?: string;
   role: 'vendor';
 }
 
 export interface CustomerUser {
-  id: string; // local UUID — no backend auth for customers
+  id: number;
   name: string;
+  email: string;
+  phone?: string;
   role: 'customer';
 }
 
@@ -36,15 +39,67 @@ export interface CollectionJob {
   updated_at: string;
 }
 
-// ─── Customer Request ────────────────────────────────────────────────────────
+export interface VendorSite {
+  id: number;
+  name: string;
+  state?: string | null;
+  city?: string | null;
+  location: string;
+  address: string;
+}
 
-export type RequestStatus = 'not_picked_up' | 'picked_up';
+// ─── Customer Pickup Requests ────────────────────────────────────────────────
 
-export interface ScrapRequest {
-  id: string;
-  status: RequestStatus;
-  submitted_at: string;
-  picked_up_at?: string;
+export type PickupRequestStatus =
+  | 'pending_review'
+  | 'assigned'
+  | 'truck_dispatched'
+  | 'completed'
+  | 'cancelled';
+
+export interface PickupRequest {
+  id: number;
+  status: PickupRequestStatus;
+  customer_name: string;
+  customer_email: string;
+  customer_phone?: string | null;
+  pickup_address: string;
+  location_notes?: string | null;
+  scrap_type?: string | null;
+  scrap_description: string;
+  estimated_weight_mt?: string | null;
+  preferred_pickup_date?: string | null;
+  notes?: string | null;
+  requested_at: string;
+  picked_up_at?: string | null;
+  assigned_vendor_name?: string | null;
+  assigned_godown_name?: string | null;
+  collection_job?: {
+    id: number;
+    status: string;
+    collected_amount_mt?: string | null;
+    dispatched_at?: string | null;
+    collected_at?: string | null;
+  } | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreatePickupRequestInput {
+  pickup_address: string;
+  location_notes?: string;
+  scrap_description: string;
+  estimated_weight_mt?: number;
+  preferred_pickup_date?: string;
+  notes?: string;
+}
+
+export interface CustomerRegisterInput {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  password_confirmation: string;
 }
 
 // ─── API ─────────────────────────────────────────────────────────────────────
@@ -67,10 +122,16 @@ export interface LoginResponse {
   user: VendorUser;
 }
 
+export interface CustomerAuthResponse {
+  token: string;
+  user: CustomerUser;
+}
+
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
 export type RootStackParamList = {
   RoleSelect: undefined;
+  CustomerAuth: undefined;
   CustomerHome: undefined;
   VendorLogin: undefined;
   VendorJobList: undefined;

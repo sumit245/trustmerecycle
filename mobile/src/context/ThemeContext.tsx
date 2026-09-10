@@ -3,7 +3,7 @@ import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, ColorsDark } from '../constants/theme';
 
-type ThemeColors = typeof Colors;
+type ThemeColors = typeof Colors | typeof ColorsDark;
 
 interface ThemeContextValue {
   isDark: boolean;

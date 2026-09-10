@@ -1,4 +1,4 @@
-package com.decideprecise.scrapcollector
+package com.dashandots.trustmerecycle
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

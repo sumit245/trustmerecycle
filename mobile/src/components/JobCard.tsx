@@ -77,7 +77,9 @@ export function JobCard({ job, onPickUp }: JobCardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.surface,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
     ...Shadow.card,

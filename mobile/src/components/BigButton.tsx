@@ -69,12 +69,12 @@ export function BigButton({
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: MIN_TAP_TARGET + 12, // 68pt — very comfortable target
-    borderRadius: Radius.lg,
+    minHeight: MIN_TAP_TARGET,
+    borderRadius: Radius.md,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.sm,
     ...Shadow.button,
   },
   fullWidth: {
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.xs,
   },
   label: {
-    fontSize: Typography.subheadingSize,
+    fontSize: Typography.bodySize,
     fontWeight: Typography.weightBold,
     textAlign: 'center',
     letterSpacing: 0.3,

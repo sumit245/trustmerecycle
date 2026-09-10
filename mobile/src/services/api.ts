@@ -1,13 +1,23 @@
+import { Platform } from 'react-native';
 import type {
   ApiResponse,
   CollectionJob,
+  CreatePickupRequestInput,
+  CustomerAuthResponse,
+  CustomerRegisterInput,
   LoginResponse,
   PaginatedResponse,
+  PickupRequest,
+  VendorSite,
 } from '../types';
 
 const BASE_URL = __DEV__
-  ? 'http://10.0.2.2:8000/api'
-  : 'https://api.trustmerecycle.in/api';
+  ? Platform.select({
+      android: 'http://10.0.2.2:8001/api',
+      ios: 'http://127.0.0.1:8001/api',
+      default: 'http://127.0.0.1:8001/api',
+    })!
+  : 'https://trustmerecycle.in/api';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 
@@ -97,6 +107,29 @@ export async function vendorLogout(token: string): Promise<void> {
   await request('/vendor/logout', { method: 'POST' }, token);
 }
 
+export async function customerRegister(
+  input: CustomerRegisterInput,
+): Promise<CustomerAuthResponse> {
+  return request<CustomerAuthResponse>('/customer/register', {
+    method: 'POST',
+    body: JSON.stringify({ ...input, device_name: 'mobile_app' }),
+  });
+}
+
+export async function customerLogin(
+  email: string,
+  password: string,
+): Promise<CustomerAuthResponse> {
+  return request<CustomerAuthResponse>('/customer/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password, device_name: 'mobile_app' }),
+  });
+}
+
+export async function customerLogout(token: string): Promise<void> {
+  await request('/customer/logout', { method: 'POST' }, token);
+}
+
 // ── Jobs ─────────────────────────────────────────────────────────────────────
 
 export async function fetchJobs(
@@ -108,6 +141,10 @@ export async function fetchJobs(
     {},
     token,
   );
+}
+
+export async function fetchVendorSites(token: string): Promise<ApiResponse<VendorSite[]>> {
+  return request<ApiResponse<VendorSite[]>>('/vendor/sites', {}, token);
 }
 
 export async function fetchJob(
@@ -152,13 +189,26 @@ export function getExportUrl(
   return url;
 }
 
-// ── Customer (local-first — no backend endpoint yet) ─────────────────────────
-// TODO: Customer flow — connect to real backend API when customer endpoints are built
+// ── Customer Pickup Requests ────────────────────────────────────────────────
 
-export function buildLocalRequest(): import('../types').ScrapRequest {
-  return {
-    id: `req_${Date.now()}`,
-    status: 'not_picked_up',
-    submitted_at: new Date().toISOString(),
-  };
+export async function fetchPickupRequests(
+  token: string,
+  page = 1,
+): Promise<PaginatedResponse<PickupRequest>> {
+  return request<PaginatedResponse<PickupRequest>>(
+    `/customer/pickup-requests?page=${page}`,
+    {},
+    token,
+  );
+}
+
+export async function createPickupRequest(
+  token: string,
+  input: CreatePickupRequestInput,
+): Promise<ApiResponse<PickupRequest>> {
+  return request<ApiResponse<PickupRequest>>(
+    '/customer/pickup-requests',
+    { method: 'POST', body: JSON.stringify(input) },
+    token,
+  );
 }

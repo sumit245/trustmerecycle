@@ -760,17 +760,17 @@
     "ios": {
       "sourceDir": "/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/ios",
       "xcodeProject": {
-        "name": "TrustMeRecycleMobile.xcodeproj",
+        "name": "TrustMeRecycleMobile.xcworkspace",
         "path": ".",
-        "isWorkspace": false
+        "isWorkspace": true
       },
       "assets": []
     },
     "android": {
       "sourceDir": "/Applications/XAMPP/xamppfiles/htdocs/trustmerecycle/mobile/android",
       "appName": "app",
-      "packageName": "com.decideprecise.scrapcollector",
-      "applicationId": "com.decideprecise.scrapcollector",
+      "packageName": "com.dashandots.trustmerecycle",
+      "applicationId": "com.dashandots.trustmerecycle",
       "mainActivity": ".MainActivity",
       "assets": []
     }

@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useApp } from '../context/AppContext';
 import { RoleSelectScreen } from '../screens/RoleSelectScreen';
+import { CustomerAuthScreen } from '../screens/customer/CustomerAuthScreen';
 import { CustomerHomeScreen } from '../screens/customer/CustomerHomeScreen';
 import { VendorLoginScreen } from '../screens/vendor/VendorLoginScreen';
 import { VendorJobListScreen } from '../screens/vendor/VendorJobListScreen';
@@ -12,7 +13,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function AppNavigator() {
   const { state } = useApp();
-  const isLoggedIn = !!state.user;
+  const isLoggedIn = !!state.user && !!state.token;
   const isVendor = state.user?.role === 'vendor';
   const isCustomer = state.user?.role === 'customer';
 
@@ -42,6 +43,11 @@ export function AppNavigator() {
             component={VendorLoginScreen}
             options={{ title: 'Vendor Login' }}
           />
+          <Stack.Screen
+            name="CustomerAuth"
+            component={CustomerAuthScreen}
+            options={{ title: 'Customer Login' }}
+          />
         </>
       ) : isCustomer ? (
         // ── Customer stack ────────────────────────────────────────────────
@@ -55,7 +61,7 @@ export function AppNavigator() {
         <Stack.Screen
           name="VendorJobList"
           component={VendorJobListScreen}
-          options={{ title: 'Pickup Requests' }}
+          options={{ title: 'Collection Dashboard', headerShown: false }}
         />
       ) : null}
     </Stack.Navigator>

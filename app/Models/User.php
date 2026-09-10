@@ -75,6 +75,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if the user is a customer.
+     */
+    public function isCustomer(): bool
+    {
+        return $this->role === 'customer';
+    }
+
+    /**
      * Check if the user is a Site Incharge (alias for isVendor).
      */
     public function isSiteIncharge(): bool

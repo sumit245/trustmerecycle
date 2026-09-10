@@ -10,7 +10,7 @@ import { SecureStorage } from '../services/storage';
 import type {
   AppUser,
   CollectionJob,
-  ScrapRequest,
+  PickupRequest,
 } from '../types';
 
 // ── State ───────────────────────────────────────────────────────────────────
@@ -19,7 +19,7 @@ interface AppState {
   user: AppUser | null;
   token: string | null;
   jobs: CollectionJob[];
-  customerRequest: ScrapRequest | null;
+  pickupRequests: PickupRequest[];
   loading: boolean;
   error: string | null;
 }
@@ -28,7 +28,7 @@ const initialState: AppState = {
   user: null,
   token: null,
   jobs: [],
-  customerRequest: null,
+  pickupRequests: [],
   loading: false,
   error: null,
 };
@@ -43,8 +43,8 @@ type Action =
   | { type: 'SET_JOBS'; payload: CollectionJob[] }
   | { type: 'APPEND_JOBS'; payload: CollectionJob[] }
   | { type: 'UPDATE_JOB_STATUS'; payload: { id: number; status: CollectionJob['status'] } }
-  | { type: 'SET_CUSTOMER_REQUEST'; payload: ScrapRequest | null }
-  | { type: 'UPDATE_REQUEST_STATUS'; payload: { id: string; status: ScrapRequest['status'] } };
+  | { type: 'SET_PICKUP_REQUESTS'; payload: PickupRequest[] }
+  | { type: 'UPSERT_PICKUP_REQUEST'; payload: PickupRequest };
 
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -72,20 +72,15 @@ function reducer(state: AppState, action: Action): AppState {
           j.id === action.payload.id ? { ...j, status: action.payload.status } : j,
         ),
       };
-    case 'SET_CUSTOMER_REQUEST':
-      return { ...state, customerRequest: action.payload };
-    case 'UPDATE_REQUEST_STATUS':
-      if (!state.customerRequest || state.customerRequest.id !== action.payload.id) {
-        return state;
-      }
+    case 'SET_PICKUP_REQUESTS':
+      return { ...state, pickupRequests: action.payload };
+    case 'UPSERT_PICKUP_REQUEST':
       return {
         ...state,
-        customerRequest: {
-          ...state.customerRequest,
-          status: action.payload.status,
-          picked_up_at:
-            action.payload.status === 'picked_up' ? new Date().toISOString() : undefined,
-        },
+        pickupRequests: [
+          action.payload,
+          ...state.pickupRequests.filter(request => request.id !== action.payload.id),
+        ],
       };
     default:
       return state;
@@ -104,7 +99,6 @@ const AppContext = createContext<AppContextValue | null>(null);
 
 const STORAGE_KEYS = {
   user: '@trustme:user',
-  customerRequest: '@trustme:customer_request',
 };
 
 // ── Provider ────────────────────────────────────────────────────────────────
@@ -115,10 +109,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const [token, userRaw, requestRaw] = await Promise.all([
+        const [token, userRaw] = await Promise.all([
           SecureStorage.getToken(),
           AsyncStorage.getItem(STORAGE_KEYS.user),
-          AsyncStorage.getItem(STORAGE_KEYS.customerRequest),
         ]);
 
         if (userRaw) {
@@ -129,12 +122,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           });
         }
 
-        if (requestRaw) {
-          dispatch({
-            type: 'SET_CUSTOMER_REQUEST',
-            payload: JSON.parse(requestRaw),
-          });
-        }
       } catch {
         // corrupt storage — start fresh
       }
@@ -153,20 +140,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state.token]);
 
-  useEffect(() => {
-    if (state.customerRequest) {
-      AsyncStorage.setItem(
-        STORAGE_KEYS.customerRequest,
-        JSON.stringify(state.customerRequest),
-      ).catch(() => {});
-    }
-  }, [state.customerRequest]);
-
   const logout = useCallback(async () => {
     await Promise.all([
       SecureStorage.removeToken(),
       AsyncStorage.removeItem(STORAGE_KEYS.user),
-      AsyncStorage.removeItem(STORAGE_KEYS.customerRequest),
     ]);
     dispatch({ type: 'LOGOUT' });
   }, []);
